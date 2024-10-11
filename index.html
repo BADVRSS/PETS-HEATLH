@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimalhua-CAN - Inicio</title>
+    <link rel="icon" href="img/logo.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .slider {
+            position: relative;
+            overflow: hidden;
+            height: 400px;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        .slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center mb-4 md:mb-0">
+                <img src="img/logo.jpeg" alt="Chimalhua-CAN Logo" class="h-12 w-12 mr-4 rounded-full">
+                <h1 class="text-2xl font-bold text-gray-800">Consultorio Veterinario "Chimalhua-CAN"</h1>
+            </div>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="productos.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Productos</a></li>
+                    <li><a href="iniciarS.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Iniciar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Slider Section -->
+        <section class="slider">
+            <div class="slide">
+                <img src="img/sld1.jpeg" alt="Cuidado de Mascotas">
+            </div>
+            <div class="slide">
+                <img src="img/sld2.jpeg" alt="Vacunación">
+            </div>
+            <div class="slide">
+                <img src="img/sld3.jpeg" alt="Consultas Especializadas">
+            </div>
+        </section>
+
+        <!-- Servicios Section -->
+        <section class="container mx-auto px-4 py-12">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Nuestros Servicios</h2>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg cursor-pointer" onclick="showServiceInfo('Limpieza Dental', 'img/sld1.jpeg', 'La salud dental es crucial para el bienestar general de tu mascota. Nuestros servicios de limpieza dental incluyen revisión, limpieza profunda y pulida para mantener los dientes y encías de tu mascota en óptimas condiciones.')">
+                    <img src="img/sld1.jpeg" alt="Limpieza Dental" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Limpieza Dental</h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg cursor-pointer" onclick="showServiceInfo('Hospitalización', 'img/sld4.jpeg', 'Proveemos hospitalización para mascotas que requieren cuidados intensivos o vigilancia continua. Nuestro equipo monitorea a los pacientes 24/7, ofreciendo un entorno seguro y cómodo. Desde cirugías complicadas hasta tratamientos de enfermedades crónicas, nuestras instalaciones están equipadas con la última tecnología para garantizar el mejor cuidado posible.')">
+                    <img src="img/sld4.jpeg" alt="Hospitalización" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Hospitalización</h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg cursor-pointer" onclick="showServiceInfo('Revisión', 'img/sld2.jpeg', 'Las revisiones periódicas son esenciales para detectar posibles problemas de salud antes de que se conviertan en serios. Nuestro equipo de veterinarios realiza un chequeo completo, que incluye la evaluación de los ojos, oídos, piel, peso, y más. También ofrecemos pruebas de laboratorio para obtener diagnósticos precisos y rápidos.')">
+                    <img src="img/sld2.jpeg" alt="Revisión" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Revisión</h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg cursor-pointer" onclick="showServiceInfo('Cirugías', 'img/sld5.jpeg', 'Nuestro equipo realiza cirugías veterinarias tanto de rutina como especializadas. Contamos con instalaciones modernas y tecnología de vanguardia para garantizar la seguridad y el bienestar de tu mascota durante el procedimiento.')">
+                    <img src="img/sld5.jpeg" alt="Cirugías" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Cirugías</h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg cursor-pointer" onclick="showServiceInfo('Urgencias', 'img/sld6.jpeg', 'Nuestro servicio de urgencias está disponible las 24 horas del día para atender cualquier situación crítica que pueda surgir. Ya sea un accidente, una enfermedad repentina, o cualquier otra emergencia, nuestro equipo está preparado para intervenir rápidamente y proporcionar el tratamiento necesario en el momento adecuado.')">
+                    <img src="img/sld6.jpeg" alt="Urgencias" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Urgencias</h3>
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg cursor-pointer" onclick="showServiceInfo('Consultorio a Domicilio', 'img/sld3.jpeg', 'Entendemos que algunas mascotas pueden sentirse estresadas al salir de casa o visitar una clínica. Por eso, ofrecemos un servicio de consultorio móvil que llega directamente a tu hogar. Desde revisiones generales hasta vacunaciones, traemos todos los instrumentos necesarios para ofrecer una experiencia cómoda y profesional.')">
+                    <img src="img/sld3.jpeg" alt="Consultorio a Domicilio" class="w-full h-48 object-cover">
+                    <div class="p-4">
+                        <h3 class="text-xl font-semibold mb-2 text-gray-800">Consultorio a Domicilio</h3>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-sm mt-auto">
+        <div class="container mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <h4 class="font-bold mb-2">Nos ubicamos en:</h4>
+                    <p>Av. Saltillo s/n Esq. Calle Clavel Col. Jardines de San Agustín Chimalhuacán Edo. de Méx.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Horario:</h4>
+                    <p>Lunes a Sábado: 10:00 a.m. - 7:00 p.m.</p>
+                    <p>Domingos: 11:00 a.m. - 3:00 p.m.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Redes Sociales:</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=100063788671062&mibextid=ZbWKwL" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/veterinaria_chimalhuacan?igsh=MXFrZnl6NWQ1aGVlbw==" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <p>&copy; 2024 Team Master. All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function showServiceInfo(title, imageUrl, description) {
+            Swal.fire({
+                title: title,
+                text: description,
+                imageUrl: imageUrl,
+                imageWidth: 400,
+                imageHeight: 200,
+                imageAlt: title,
+                confirmButtonText: 'Cerrar'
+            });
+        }
+
+        // Slider JS
+        let slideIndex = 0;
+        const slides = document.getElementsByClassName("slide");
+
+        function showSlides() {
+            for (let i = 0; i < slides.length; i++) {
+                slides[i].classList.remove("active");
+            }
+            slideIndex++;
+            if (slideIndex > slides.length) {slideIndex = 1}    
+            slides[slideIndex - 1].classList.add("active");
+            setTimeout(showSlides, 3000); // Cambia de imagen cada 3 segundos
+        }
+
+        showSlides();
+    </script>
+</body>
+</html>

@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chimalhua-CAN - Iniciar Sesión</title>
+<link rel="icon" href="img/logo.jpeg">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col min-h-screen">
+<header class="bg-white shadow-md">
+<div class="container mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between">
+    <div class="flex items-center mb-4 md:mb-0">
+        <img src="img/logo.jpeg" alt="Chimalhua-CAN Logo" class="h-12 w-12 mr-4 rounded-full">
+        <h1 class="text-2xl font-bold text-gray-800">Consultorio Veterinario "Chimalhua-CAN"</h1>
+    </div>
+    <nav>
+        <ul class="flex space-x-6">
+            <li><a href="index.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Inicio</a></li>
+            <li><a href="productos.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Productos</a></li>
+        </ul>
+    </nav>
+</div>
+</header>
+
+<main class="container mx-auto px-4 py-12 flex-grow">
+<div class="max-w-md mx-auto bg-white rounded-lg shadow-md overflow-hidden">
+    <div class="p-6">
+        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Iniciar Sesión</h2>
+        <form id="form-login">
+            <div class="mb-4">
+                <label for="username" class="block text-gray-700 text-sm font-bold mb-2">Correo electrónico</label>
+                <input type="email" id="username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-6">
+                <label for="password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+                <input type="password" id="password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="button" onclick="iniciarSesion()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                    Iniciar sesión
+                </button>
+                <a href="#" onclick="mostrarFormularioRegistro()" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 transition duration-300">
+                    Crear una cuenta
+                </a>
+            </div>
+        </form>
+        <form id="form-register" class="hidden">
+            <div class="mb-4">
+                <label for="register-name" class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+                <input type="text" id="register-name" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-4">
+                <label for="register-username" class="block text-gray-700 text-sm font-bold mb-2">Correo electrónico</label>
+                <input type="email" id="register-username" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="mb-6">
+                <label for="register-password" class="block text-gray-700 text-sm font-bold mb-2">Contraseña</label>
+                <input type="password" id="register-password" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline" required>
+            </div>
+            <div class="flex items-center justify-between">
+                <button type="button" onclick="registrarCuenta()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300">
+                    Registrar
+                </button>
+                <a href="#" onclick="mostrarFormularioLogin()" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 transition duration-300">
+                    Ya tengo una cuenta
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+</main>
+
+<footer class="bg-gray-800 text-white text-sm mt-auto">
+<div class="container mx-auto px-4 py-6">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+            <h4 class="font-bold mb-2">Nos ubicamos en:</h4>
+            <p>Av. Saltillo s/n Esq. Calle Clavel Col. Jardines de San Agustín Chimalhuacán Edo. de Méx.</p>
+        </div>
+        <div>
+            <h4 class="font-bold mb-2">Horario:</h4>
+            <p>Lunes a Sábado: 10:00 a.m. - 7:00 p.m.</p>
+            <p>Domingos: 11:00 a.m. - 3:00 p.m.</p>
+        </div>
+        <div>
+            <h4 class="font-bold mb-2">Redes Sociales:</h4>
+            <div class="flex space-x-4">
+                <a href="https://www.facebook.com/profile.php?id=100063788671062&mibextid=ZbWKwL" class="hover:text-gray-300 transition duration-300">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="https://www.instagram.com/veterinaria_chimalhuacan?igsh=MXFrZnl6NWQ1aGVlbw==" class="hover:text-gray-300 transition duration-300">
+                    <i class="fab fa-instagram"></i>
+                </a>
+                <a href="#" class="hover:text-gray-300 transition duration-300">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="mt-4 text-center">
+        <p>&copy; 2024 Team Master. All Rights Reserved</p>
+    </div>
+</div>
+</footer>
+
+<script>
+// Configuración de Firebase (reemplaza con tus propias credenciales)
+const firebaseConfig = {
+    apiKey: "AIzaSyBhNGcipRymMP_1FFU2izi6Be2El2slG0E",
+    authDomain: "chimalhua-can-dd624.firebaseapp.com",
+    databaseURL: "https://chimalhua-can-dd624-default-rtdb.firebaseio.com",
+    projectId: "chimalhua-can-dd624",
+    storageBucket: "chimalhua-can-dd624.appspot.com",
+    messagingSenderId: "138908575127",
+    appId: "1:138908575127:web:8007d41d3970e76b8650d2"
+};
+// Inicializar Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const database = firebase.database();
+
+function registrarCuenta() {
+    var email = document.getElementById("register-username").value;
+    var password = document.getElementById("register-password").value;
+    var nombre = document.getElementById("register-name").value;
+    
+    if (email && password && nombre) {
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // Usuario registrado
+                var user = userCredential.user;
+                // Guardar información adicional en la base de datos
+                database.ref('usuarios/' + user.uid).set({
+                    nombre: nombre,
+                    email: email,
+                    tipo: 'cliente' // Por defecto, todos los nuevos usuarios son clientes
+                });
+                // Enviar correo de verificación
+                user.sendEmailVerification().then(() => {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Registro exitoso',
+                        text: 'Se ha enviado un correo de verificación a tu dirección de email.',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        window.location.href = "iniciarS.html";
+                    });
+                });
+            })
+            .catch((error) => {
+                console.error("Error al registrar usuario:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Hubo un problema al registrar la cuenta: ' + error.message,
+                    confirmButtonText: 'OK'
+                });
+            });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Registro fallido',
+            text: 'Por favor, completa todos los campos',
+            confirmButtonText: 'Reintentar'
+        });
+    }
+}
+
+function iniciarSesion() {
+    var email = document.getElementById("username").value;
+    var password = document.getElementById("password").value;
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredential) => {
+            var user = userCredential.user;
+            if (user.emailVerified) {
+                // Verificar el tipo de usuario
+                database.ref('usuarios/' + user.uid).once('value').then((snapshot) => {
+                    var userData = snapshot.val();
+                    if (userData) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Inicio de sesión exitoso',
+                            text: `Has iniciado sesión como ${userData.nombre}`,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            switch(userData.tipo) {
+                                case 'veterinario':
+                                    window.location.href = "vet.html";
+                                    break;
+                                case 'asistente':
+                                    window.location.href = "asis.html";
+                                    break;
+                                default:
+                                    window.location.href = "cuenta-usuario.html";
+                            }
+                        });
+                    } else {
+                        // Si no hay datos de usuario, asumir que es un cliente
+                        window.location.href = "cuenta-usuario.html";
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Correo no verificado',
+                    text: 'Por favor, verifica tu correo electrónico antes de iniciar sesión.',
+                    confirmButtonText: 'OK'
+                });
+            }
+        })
+        .catch((error) => {
+            console.error("Error al iniciar sesión:", error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Error de inicio de sesión',
+                text: 'Correo electrónico o contraseña incorrectos',
+                confirmButtonText: 'Reintentar'
+            });
+        });
+}
+
+function mostrarFormularioRegistro() {
+    document.getElementById('form-login').classList.add('hidden');
+    document.getElementById('form-register').classList.remove('hidden');
+}
+
+function mostrarFormularioLogin() {
+    document.getElementById('form-register').classList.add('hidden');
+    document.getElementById('form-login').classList.remove('hidden');
+}
+</script>
+</body>
+</html>

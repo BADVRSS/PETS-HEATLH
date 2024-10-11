@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chimalhua-CAN - Panel del Veterinario</title>
+    <link rel="icon" href="img/logo.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col min-h-screen">
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center mb-4 md:mb-0">
+                <img src="img/logo.jpeg" alt="Chimalhua-CAN Logo" class="h-12 w-12 mr-4 rounded-full">
+                <h1 class="text-2xl font-bold text-gray-800">Panel del Veterinario</h1>
+            </div>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="#" onclick="mostrarCitas()" class="text-gray-600 hover:text-gray-800 transition duration-300">Citas</a></li>
+                    <li><a href="#" onclick="mostrarPacientes()" class="text-gray-600 hover:text-gray-800 transition duration-300">Pacientes</a></li>
+                    <li><a href="#" onclick="cerrarSesion()" class="text-gray-600 hover:text-gray-800 transition duration-300">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-12 flex-grow">
+        <div id="citas" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Citas Programadas</h2>
+            <div id="lista-citas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Las citas se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+
+        <div id="pacientes" class="hidden">
+            <h2 class="text-2xl font-bold mb-4">Pacientes</h2>
+            <div id="lista-pacientes" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Los pacientes se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-sm mt-auto">
+        <div class="container mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <h4 class="font-bold mb-2">Nos ubicamos en:</h4>
+                    <p>Av. Saltillo s/n Esq. Calle Clavel Col. Jardines de San Agustín Chimalhuacán Edo. de Méx.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Horario:</h4>
+                    <p>Lunes a Sábado: 10:00 a.m. - 7:00 p.m.</p>
+                    <p>Domingos: 11:00 a.m. - 3:00 p.m.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Redes Sociales:</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=100063788671062&mibextid=ZbWKwL" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/veterinaria_chimalhuacan?igsh=MXFrZnl6NWQ1aGVlbw==" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <p>&copy; 2024 Team Master. All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Configuración de Firebase (reemplaza con tus propias credenciales)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhNGcipRymMP_1FFU2izi6Be2El2slG0E",
+            authDomain: "chimalhua-can-dd624.firebaseapp.com",
+            databaseURL: "https://chimalhua-can-dd624-default-rtdb.firebaseio.com",
+            projectId: "chimalhua-can-dd624",
+            storageBucket: "chimalhua-can-dd624.appspot.com",
+            messagingSenderId: "138908575127",
+            appId: "1:138908575127:web:8007d41d3970e76b8650d2"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        function mostrarCitas() {
+            document.getElementById('citas').classList.remove('hidden');
+            document.getElementById('pacientes').classList.add('hidden');
+            cargarCitas();
+        }
+
+        function mostrarPacientes() {
+            document.getElementById('pacientes').classList.remove('hidden');
+            document.getElementById('citas').classList.add('hidden');
+            cargarPacientes();
+        }
+
+        function cargarCitas() {
+            const listaCitas = document.getElementById('lista-citas');
+            listaCitas.innerHTML = '';
+            database.ref('citas').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const cita = childSnapshot.val();
+                    const citaElement = document.createElement('div');
+                    citaElement.className = 'bg-white p-4 rounded shadow';
+                    citaElement.innerHTML = `
+                        <h3 class="font-bold">${cita.nombreMascota}</h3>
+                        <p>Fecha: ${cita.fecha}</p>
+                        <p>Hora: ${cita.hora}</p>
+                        <p>Dueño: ${cita.nombreDueno}</p>
+                    `;
+                    listaCitas.appendChild(citaElement);
+                });
+            });
+        }
+
+        function cargarPacientes() {
+            const listaPacientes = document.getElementById('lista-pacientes');
+            listaPacientes.innerHTML = '';
+            database.ref('pacientes').once('value', (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    const paciente = childSnapshot.val();
+                    const pacienteElement = document.createElement('div');
+                    pacienteElement.className = 'bg-white p-4 rounded shadow';
+                    pacienteElement.innerHTML = `
+                        <h3 class="font-bold">${paciente.nombre}</h3>
+                        <p>Especie: ${paciente.especie}</p>
+                        <p>Raza: ${paciente.raza}</p>
+                        <p>Dueño: ${paciente.nombreDueno}</p>
+                    `;
+                    listaPacientes.appendChild(pacienteElement);
+                });
+            });
+        }
+
+        function cerrarSesion() {
+            auth.signOut().then(() => {
+                window.location.href = 'iniciarS.html';
+            }).catch((error) => {
+                console.error("Error al cerrar sesión:", error);
+            });
+        }
+
+        // Verificar si el usuario está autenticado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                // Verificar si el usuario es un veterinario
+                database.ref('usuarios/' + user.uid).once('value').then((snapshot) => {
+                    const userData = snapshot.val();
+                    if (userData && userData.tipo === 'veterinario') {
+                        mostrarCitas(); // Mostrar citas por defecto
+                    } else {
+                        // Si no es veterinario, redirigir a la página de inicio de sesión
+                        window.location.href = 'iniciarS.html';
+                    }
+                });
+            } else {
+                // Si no hay usuario autenticado, redirigir a la página de inicio de sesión
+                window.location.href = 'iniciarS.html';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda - Chimalhua-CAN</title>
+    <link rel="icon" href="img/logo.jpeg">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
+    <script src="https://smtpjs.com/v3/smtp.js"></script>
+</head>
+<body class="bg-gray-100 font-sans flex flex-col min-h-screen">
+    <header class="bg-white shadow-md">
+        <div class="container mx-auto px-4 py-6 flex items-center justify-between">
+            <div class="flex items-center">
+                <img src="img/logo.jpeg" alt="Chimalhua-CAN Logo" class="h-12 w-12 mr-4 rounded-full">
+                <h1 class="text-2xl font-bold text-gray-800">Chimalhua-CAN</h1>
+            </div>
+            <nav>
+                <ul class="flex space-x-6">
+                    <li><a href="index.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Inicio</a></li>
+                    <li><a href="tienda.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Tienda</a></li>
+                    <li><a href="cuenta-usuario.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Mi Perfil</a></li>
+                    <li><a href="#" onclick="cerrarSesion()" class="text-gray-600 hover:text-gray-800 transition duration-300">Cerrar Sesión</a></li>
+                </ul>
+            </nav>
+            <div id="usuario-info" class="text-gray-600"></div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Productos</h2>
+        <div id="productos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Los productos se cargarán dinámicamente aquí -->
+        </div>
+
+        <div id="carrito" class="fixed top-24 right-4 bg-white p-4 rounded-lg shadow-lg hidden">
+            <h2 class="text-xl font-bold mb-4">Carrito de Compras</h2>
+            <div id="carrito-items" class="space-y-2"></div>
+            <div class="mt-4">
+                <h3 class="font-bold">Total: $<span id="total-carrito">0</span></h3>
+                <button class="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300" onclick="mostrarFormularioPagar()">Pagar</button>
+            </div>
+        </div>
+
+        <div id="form-pagar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                <h2 class="text-2xl font-bold mb-4">Información de Pago</h2>
+                <form id="payment-form" class="space-y-4">
+                    <div>
+                        <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre:</label>
+                        <input type="text" id="nombre" name="nombre" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                        <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección:</label>
+                        <input type="text" id="direccion" name="direccion" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div>
+                        <label for="tarjeta" class="block text-sm font-medium text-gray-700">Número de Tarjeta:</label>
+                        <input type="text" id="tarjeta" name="tarjeta" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+                    <div class="flex justify-end space-x-2">
+                        <button type="button" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition duration-300" onclick="cerrarFormularioPagar()">Cancelar</button>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Pagar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white text-sm mt-auto">
+        <div class="container mx-auto px-4 py-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <h4 class="font-bold mb-2">Nos ubicamos en:</h4>
+                    <p>Av. Saltillo s/n Esq. Calle Clavel Col. Jardines de San Agustín Chimalhuacán Edo. de Méx.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Horario:</h4>
+                    <p>Lunes a Sábado: 10:00 a.m. - 7:00 p.m.</p>
+                    <p>Domingos: 11:00 a.m. - 3:00 p.m.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-2">Redes Sociales:</h4>
+                    <div class="flex space-x-4">
+                        <a href="https://www.facebook.com/profile.php?id=100063788671062&mibextid=ZbWKwL" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/veterinaria_chimalhuacan?igsh=MXFrZnl6NWQ1aGVlbw==" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="hover:text-gray-300 transition duration-300">
+                            <i class="fab fa-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <p>&copy; 2024 Team Master. All Rights Reserved</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Configuración de Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhNGcipRymMP_1FFU2izi6Be2El2slG0E",
+            authDomain: "chimalhua-can-dd624.firebaseapp.com",
+            databaseURL: "https://chimalhua-can-dd624-default-rtdb.firebaseio.com",
+            projectId: "chimalhua-can-dd624",
+            storageBucket: "chimalhua-can-dd624.appspot.com",
+            messagingSenderId: "138908575127",
+            appId: "1:138908575127:web:8007d41d3970e76b8650d2"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
+
+        let userId;
+        let carrito = [];
+        let total = 0;
+
+        // Verificar si el usuario está autenticado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                userId = user.uid;
+                cargarDatosUsuario();
+                cargarProductos();
+            } else {
+                window.location.href = 'iniciarS.html';
+            }
+        });
+
+        function cargarDatosUsuario() {
+            database.ref('usuarios/' + userId).once('value', (snapshot) => {
+                const usuario = snapshot.val();
+                document.getElementById('usuario-info').textContent = `Bienvenido, ${usuario.nombre || 'Usuario'}`;
+            });
+        }
+
+        function cargarProductos() {
+            const productos = [
+                { id: 1, nombre: "Shampoo para perros", precio: 100, imagen: "img/producto1.jpeg" },
+                { id: 2, nombre: "Juguete para perros", precio: 150, imagen: "img/producto2.jpeg" },
+                { id: 3, nombre: "Collar para gatos", precio: 80, imagen: "img/producto3.jpeg" },
+                { id: 4, nombre: "Comida para peces", precio: 50, imagen: "img/producto4.jpeg" },
+                { id: 5, nombre: "Arena para gatos", precio: 120, imagen: "img/producto5.jpeg" },
+                { id: 6, nombre: "Casa para perros", precio: 300, imagen: "img/producto6.jpeg" }
+            ];
+
+            const productosContainer = document.getElementById('productos');
+            productos.forEach(producto => {
+                const productoElement = document.createElement('div');
+                productoElement.className = 'bg-white rounded-lg shadow-md p-4';
+                productoElement.innerHTML = `
+                    <img src="${producto.imagen}" alt="${producto.nombre}" class="w-full h-48 object-cover rounded-t-lg">
+                    <h3 class="text-lg font-semibold mt-2">${producto.nombre}</h3>
+                    <p class="text-gray-600">Precio: $${producto.precio}</p>
+                    <button onclick="agregarAlCarrito(${producto.id}, '${producto.nombre}', ${producto.precio}, '${producto.imagen}')" class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Añadir al carrito</button>
+                `;
+                productosContainer.appendChild(productoElement);
+            });
+        }
+
+        function agregarAlCarrito(id, nombre, precio, imagen) {
+            const item = carrito.find(item => item.id === id);
+            if (item) {
+                item.cantidad++;
+            } else {
+                carrito.push({ id, nombre, precio, imagen, cantidad: 1 });
+            }
+            total += precio;
+            actualizarCarrito();
+            Swal.fire({
+                title: '¡Producto agregado!',
+                text: `${nombre} ha sido añadido al carrito.`,
+                icon: 'success',
+                confirmButtonText: 'OK'
+            });
+        }
+
+        function actualizarCarrito() {
+            const carritoItems = document.getElementById('carrito-items');
+            carritoItems.innerHTML = '';
+            carrito.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex justify-between items-center';
+                itemDiv.innerHTML = `
+                    <span>${item.nombre} (x${item.cantidad})</span>
+                    <span>$${item.precio * item.cantidad}</span>
+                    <button onclick="eliminarDelCarrito(${item.id})" class="text-red-500 hover:text-red-700">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                carritoItems.appendChild(itemDiv);
+            });
+            document.getElementById('total-carrito').textContent = total.toFixed(2);
+            document.getElementById('carrito').style.display = carrito.length > 0 ? 'block' : 'none';
+        }
+
+        function eliminarDelCarrito(id) {
+            const index = carrito.findIndex(item => item.id === id);
+            if (index !== -1) {
+                const item = carrito[index];
+                total -= item.precio * item.cantidad;
+                carrito.splice(index, 1);
+                actualizarCarrito();
+            }
+        }
+
+        function mostrarFormularioPagar() {
+            document.getElementById('form-pagar').style.display = 'flex';
+        }
+
+        function cerrarFormularioPagar() {
+            document.getElementById('form-pagar').style.display = 'none';
+        }
+
+        document.getElementById('payment-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const email = document.getElementById('email').value;
+            const direccion = document.getElementById('direccion').value;
+
+            // Generar el contenido del correo
+            let contenidoCorreo = `
+                <html>
+                <head>
+                    <style>
+                        body { 
+                            font-family: Arial, sans-serif;
+                            line-height: 1.6;
+                            color: #333;
+                        }
+                        h1 {
+                            color: #4a5568;
+                        }
+                        .logo {
+                            width: 200px;
+                            height: auto;
+                        }
+                        .order-details {
+                            background-color: #f7fafc;
+                            padding: 15px;
+                            border-radius: 5px;
+                        }
+                        .total {
+                            font-weight: bold;
+                            color: #2d3748;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>Confirmación de Orden - Chimalhua-CAN</h1>
+                    <img src="https://firebasestorage.googleapis.com/v0/b/chimalhua-can-dd624.appspot.com/o/logo.png?alt=media" alt="Logo Chimalhua-CAN" class="logo">
+                    <p>Estimado/a ${nombre},</p>
+                    <p>Gracias por tu compra en Chimalhua-CAN. A continuación, te presentamos los detalles de tu orden:</p>
+                    <div class="order-details">
+                        <ul>
+                            ${carrito.map(item => `<li>${item.nombre} - Cantidad: ${item.cantidad} - Precio: $${item.precio * item.cantidad}</li>`).join('')}
+                        </ul>
+                        <p class="total">Total: $${total.toFixed(2)}</p>
+                    </div>
+                    <p>Dirección de envío: ${direccion}</p>
+                    <p>Para completar tu pago, por favor utiliza el siguiente enlace: <a href="https://pay.chimalhua-can.com/order/${Date.now()}">Realizar pago</a></p>
+                    <p>Si tienes alguna pregunta, no dudes en contactarnos.</p>
+                    <p>Atentamente,<br>El equipo de Chimalhua-CAN</p>
+                </body>
+                </html>
+            `;
+
+            // Simulación del envío de correo usando SMTP.js
+            Email.send({
+                Host: "smtp.chimalhuacan-vet.com",
+                Username: "notificaciones@chimalhuacan-vet.com",
+                Password: "cH1m4lhu4C4N_S3cur3!",
+                To: email,
+                From: "ventas@chimalhua-can.com",
+                Subject: "Confirmación de Orden - Chimalhua-CAN",
+                Body: contenidoCorreo
+            }).then(
+                message => {
+                    console.log("Correo enviado exitosamente:", message);
+                    Swal.fire({
+                        title: '¡Compra realizada!',
+                        text: 'Gracias por tu compra. Se ha enviado un correo de confirmación con los detalles de tu orden.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            // Guardar la orden en Firebase
+                            const ordenRef = database.ref('ordenes').push();
+                            ordenRef.set({
+                                userId: userId,
+                                nombre: nombre,
+                                email: email,
+                                direccion: direccion,
+                                items: carrito,
+                                total: total,
+                                fecha: firebase.database.ServerValue.TIMESTAMP
+                            });
+
+                            carrito = [];
+                            total = 0;
+                            actualizarCarrito();
+                            cerrarFormularioPagar();
+                        }
+                    });
+                }
+            ).catch(
+                error => {
+                    console.error("Error al enviar el correo:", error);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Hubo un problema al procesar tu orden. Por favor, inténtalo de nuevo más tarde.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            );
+        });
+
+        function cerrarSesion() {
+            auth.signOut().then(() => {
+                window.location.href = 'iniciarS.html';
+            }).catch((error) => {
+                console.error("Error al cerrar sesión:", error);
+            });
+        }
+    </script>
+</body>
+</html>

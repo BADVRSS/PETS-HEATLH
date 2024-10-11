@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chimalhua-CAN - Tienda</title>
+<link rel="icon" href="img/logo.jpeg">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+<header class="bg-white shadow-md">
+    <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between">
+        <div class="flex items-center mb-4 md:mb-0">
+            <img src="img/logo.jpeg" alt="Chimalhua-CAN Logo" class="h-12 w-12 mr-4 rounded-full">
+            <h1 class="text-2xl font-bold text-gray-800">Consultorio Veterinario "Chimalhua-CAN"</h1>
+        </div>
+        <nav>
+            <ul class="flex space-x-6">
+                <li><a href="index.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Inicio</a></li>
+                <li><a href="serviciosindex.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Servicios</a></li>
+                <li><a href="#" id="cerrarSesion" class="text-gray-600 hover:text-gray-800 transition duration-300">Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+    </div>
+</header>
+
+<main class="container mx-auto px-4 py-12">
+    <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Nuestros Productos</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto1.jpeg" alt="Shampoo para perros" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Shampoo para perros</h3>
+                <p class="text-gray-600 mb-4">$50.00</p>
+                <button onclick="agregarAlCarrito('Shampoo para perros', 50)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto2.jpeg" alt="Alimento para hamster" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Alimento para hamster</h3>
+                <p class="text-gray-600 mb-4">$70.00</p>
+                <button onclick="agregarAlCarrito('Alimento para hamster', 70)"  class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto3.jpeg" alt="Cama para gato" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Cama para gato</h3>
+                <p class="text-gray-600 mb-4">$360.00</p>
+                <button onclick="agregarAlCarrito('Cama para gato', 360)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto4.jpeg" alt="Alimento para perros" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Alimento para perros</h3>
+                <p class="text-gray-600 mb-4">$650.00</p>
+                <button onclick="agregarAlCarrito('Alimento para perros', 650)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto5.jpeg" alt="Ropa y Accesorios" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Ropa y Accesorios</h3>
+                <p class="text-gray-600 mb-4">$80.00</p>
+                <button onclick="agregarAlCarrito('Ropa y Accesorios', 80)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto6.jpeg" alt="Camas para perros" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Camas para perros</h3>
+                <p class="text-gray-600 mb-4">$160.00</p>
+                <button onclick="agregarAlCarrito('Camas para perros', 160)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto7.jpg" alt="Mordedera para perro" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Mordedera para perro</h3>
+                <p class="text-gray-600 mb-4">$85.00</p>
+                <button onclick="agregarAlCarrito('Mordedera para perro', 85)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-md overflow-hidden transition duration-300 hover:shadow-lg">
+            <img src="img/producto8.jpg" alt="Camas para perros" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h3 class="text-xl font-semibold mb-2 text-gray-800">Camas para perros</h3>
+                <p class="text-gray-600 mb-4">$360.00</p>
+                <button onclick="agregarAlCarrito('Camas para perros', 360)" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300">
+                    Agregar al carrito
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="bg-gray-800 text-white text-sm mt-auto">
+    <div class="container mx-auto px-4 py-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+                <h4 class="font-bold mb-2">Nos ubicamos en:</h4>
+                <p>Av. Saltillo s/n Esq. Calle Clavel Col. Jardines de San Agustín Chimalhuacán Edo. de Méx.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Horario:</h4>
+                <p>Lunes a Sábado: 10:00 a.m. - 7:00 p.m.</p>
+                <p>Domingos: 11:00 a.m. - 3:00 p.m.</p>
+            </div>
+            <div>
+                <h4 class="font-bold mb-2">Redes Sociales:</h4>
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com/profile.php?id=100063788671062&mibextid=ZbWKwL" class="hover:text-gray-300 transition duration-300">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="https://www.instagram.com/veterinaria_chimalhuacan?igsh=MXFrZnl6NWQ1aGVlbw==" class="hover:text-gray-300 transition duration-300">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="hover:text-gray-300 transition duration-300">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="mt-4 text-center">
+            <p>&copy; 2024 Team Master. All Rights Reserved</p>
+        </div>
+    </div>
+</footer>
+<script>
+    let carrito = [];
+
+    function agregarAlCarrito(nombre, precio) {
+        carrito.push({ nombre, precio });
+        actualizarCarrito();
+        Swal.fire({
+            title: 'Producto agregado',
+            text: `${nombre} se ha agregado al carrito`,
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+    }
+
+    function actualizarCarrito() {
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+    }
+
+    document.getElementById('cerrarSesion').addEventListener('click', function(e) {
+        e.preventDefault();
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "Vas a cerrar la sesión",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, cerrar sesión',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = 'index.html';
+            }
+        });
+    });
+
+    // Cargar carrito desde localStorage al iniciar
+    window.onload = function() {
+        const carritoGuardado = localStorage.getItem('carrito');
+        if (carritoGuardado) {
+            carrito = JSON.parse(carritoGuardado);
+        }
+    };
+</script>
+</body>
+</html>

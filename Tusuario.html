@@ -142,10 +142,298 @@
             }
         });
 
-        function cargarDatosUsuario() {
+         function cargarDatosUsuario() {
             database.ref('usuarios/' + userId).once('value', (snapshot) => {
                 const usuario = snapshot.val();
-                document.getElementById('usuario-info').textContent = `Bienvenido, ${usuario.nombre || 'Usuario'}`;
+                document.getElementById('nombre-usuario').textContent = usuario.nombre || 'Usuario';
+                document.getElementById('nombre').value = usuario.nombre || '';
+                document.getElementById('email').value = usuario.email || '';
+                document.getElementById('telefono').value = usuario.telefono || '';
+                if (usuario.fotoPerfil) {
+                    
+                    document.getElementById('foto-perfil').src = usuario.fotoPerfil;
+                }
+                cargarMascotas(usuario.mascotas || {});
+                cargarOpcionesMascotas(usuario.mascotas || {});
+            });
+            cargarNovedades();
+            cargarCitasProximas();
+            cargarRecomendaciones();
+            cargarHistorialCompras();
+            cargarHistorialCitas();
+        }
+
+        function mostrarSeccion(seccion) {
+            document.getElementById('seccion-inicio').classList.add('hidden');
+            document.getElementById('seccion-perfil').classList.add('hidden');
+            document.getElementById('seccion-agendar-cita').classList.add('hidden');
+            document.getElementById(`seccion-${seccion}`).classList.remove('hidden');
+        }
+
+        function cargarMascotas(mascotas) {
+            const container = document.getElementById('mascotas-container');
+            container.innerHTML = '';
+            Object.keys(mascotas).forEach((key, index) => {
+                const mascota = mascotas[key];
+                const mascotaElement = document.createElement('div');
+                mascotaElement.className = 'mb-4 p-4 border rounded';
+                mascotaElement.innerHTML = `
+                    <h4 class="font-bold">Mascota ${index + 1}</h4>
+                    <input type="text" value="${mascota.nombre}" placeholder="Nombre" class="mascota-nombre mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <input type="text" value="${mascota.especie}" placeholder="Especie" class="mascota-especie mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <input type="text" value="${mascota.raza}" placeholder="Raza" class="mascota-raza shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                `;
+                container.appendChild(mascotaElement);
+            });
+        }
+
+        function agregarMascota() {
+            const container = document.getElementById('mascotas-container');
+            const mascotaElement = document.createElement('div');
+            mascotaElement.className = 'mb-4 p-4 border rounded';
+            mascotaElement.innerHTML = `
+                <h4 class="font-bold">Nueva Mascota</h4>
+                <input type="text" placeholder="Nombre" class="mascota-nombre mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input type="text" placeholder="Especie" class="mascota-especie mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input type="text" placeholder="Raza" class="mascota-raza shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            `;
+            container.appendChild(mascotaElement);
+        }
+
+        document.getElementById('form-perfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const telefono = document.getElementById('telefono').value;
+            const mascotasElements = document.querySelectorAll('#mascotas-container > div');
+            const mascotas = {};
+
+            mascotasElements.forEach((element, index) => {
+                mascotas[`mascota${index + 1}`] = {
+                    nombre: element.querySelector('.mascota-nombre').value,
+                    especie: element.querySelector('.mascota-especie').value,
+                    raza: element.querySelector('.mascota-raza').value
+                };
+            });
+
+            database.ref('usuarios/' + userId).update({
+                nombre: nombre,
+                telefono: telefono,
+                mascotas: mascotas
+            }).then(() => {
+                Swal.fire('Éxito', 'Perfil actualizado correctamente', 'success');
+                document.getElementById('nombre-usuario').textContent = nombre;
+                cargarOpcionesMascotas(mascotas);
+                if (telefono) {
+                    enviarConfirmacion(telefono);
+                }
+            }).catch((error) => {
+                console.error("Error al actualizar perfil:", error);
+                Swal.fire('Error', 'No se pudo actualizar el perfil', 'error');
+            });
+        });
+
+        function enviarConfirmacion(telefono) {
+            // Simulación de envío de SMS
+            console.log(`Enviando SMS de confirmación al número: ${telefono}`);
+            // Aquí iría la lógica real para enviar un SMS usando un servicio de terceros
+            Swal.fire('Confirmación enviada', `Se ha enviado un SMS de confirmación al número ${telefono}`, 'info');
+        }
+
+        document.getElementById('foto-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Mostrar un indicador de carga
+                Swal.fire({
+                    title: 'Subiendo imagen...',
+                    text: 'Por favor espere',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+        
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('foto-perfil').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+        
+                const storageRef = storage.ref('fotos_perfil/' + userId + '/' + file.name);
+                const uploadTask = storageRef.put(file);
+        
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload is ' + progress + '% done');
+                    }, 
+                    (error) => {
+                        console.error("Error al subir la imagen:", error);
+                        Swal.fire('Error', 'No se pudo subir la imagen: ' + error.message, 'error');
+                    }, 
+                    () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            return database.ref('usuarios/' + userId).update({
+                                fotoPerfil: downloadURL
+                            });
+                        }).then(() => {
+                            Swal.fire('Éxito', 'Foto de perfil actualizada correctamente', 'success');
+                        }).catch((error) => {
+                            console.error("Error al actualizar la URL de la foto en la base de datos:", error);
+                            Swal.fire('Error', 'No se pudo actualizar la foto de perfil: ' + error.message, 'error');
+                        });
+                    }
+                );
+            }
+        });
+
+        function cargarNovedades() {
+            const listaNovedades = document.getElementById('lista-novedades');
+            listaNovedades.innerHTML = '';
+            // Aquí deberías cargar las novedades desde tu base de datos
+            const novedades = [
+                'Nueva línea de alimentos para mascotas disponible',
+                'Promoción de vacunación este mes',
+                'Nuevo servicio de peluquería canina'
+            ];
+            novedades.forEach(novedad => {
+                const li = document.createElement('li');
+                li.textContent = novedad;
+                listaNovedades.appendChild(li);
+            });
+        }
+
+        function cargarCitasProximas() {
+            const listaCitasProximas = document.getElementById('lista-citas-proximas');
+            listaCitasProximas.innerHTML = '';
+            database.ref('citas').orderByChild('userId').equalTo(userId).limitToLast(3).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const cita = childSnapshot.val();
+                        const li = document.createElement('li');
+                        li.textContent = `${cita.fecha} - ${cita.hora}: ${cita.nombreMascota}`;
+                        listaCitasProximas.appendChild(li);
+                    });
+                } else {
+                    listaCitasProximas.innerHTML = '<li>No tienes citas próximas</li>';
+                }
+            });
+        }
+
+        function cargarRecomendaciones() {
+            const listaRecomendaciones = document.getElementById('lista-recomendaciones');
+            listaRecomendaciones.innerHTML = '';
+            // Aquí deberías cargar las recomendaciones desde tu base de datos
+            const recomendaciones = [
+                'Recuerda desparasitar a tus mascotas cada 3 meses',
+                'Mantén al día las vacunas de tus mascotas',
+                'Una dieta balanceada es clave para la salud de tu mascota'
+            ];
+            recomendaciones.forEach(recomendacion => {
+                const li = document.createElement('li');
+                li.textContent = recomendacion;
+                listaRecomendaciones.appendChild(li);
+            });
+        }
+
+        function cargarHistorialCompras() {
+            const historialCompras = document.getElementById('historial-compras');
+            historialCompras.innerHTML = '';
+            database.ref('compras/' + userId).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const compra = childSnapshot.val();
+                        const compraElement = document.createElement('div');
+                        compraElement.className = 'bg-gray-100 p-4 rounded';
+                        compraElement.innerHTML = `
+                            <p class="font-bold">Fecha: ${new Date(compra.fecha).toLocaleDateString()}</p>
+                            <p>Total: $${compra.total.toFixed(2)}</p>
+                            <ul class="list-disc list-inside">
+                                ${compra.productos.map(producto => `<li>${producto.nombre} - $${producto.precio.toFixed(2)}</li>`).join('')}
+                            </ul>
+                        `;
+                        historialCompras.appendChild(compraElement);
+                    });
+                } else {
+                    historialCompras.innerHTML = '<p>No hay compras registradas.</p>';
+                }
+            });
+        }
+
+        function cargarHistorialCitas() {
+            const historialCitas = document.getElementById('historial-citas');
+            historialCitas.innerHTML = '';
+            database.ref('citas').orderByChild('userId').equalTo(userId).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const cita = childSnapshot.val();
+                        const citaElement = document.createElement('div');
+                        citaElement.className = 'bg-gray-100 p-4 rounded';
+                        citaElement.innerHTML = `
+                            <p class="font-bold">Fecha: ${cita.fecha}</p>
+                            <p>Hora: ${cita.hora}</p>
+                            <p>Mascota: ${cita.nombreMascota}</p>
+                            <p>Motivo: ${cita.motivo || 'No especificado'}</p>
+                        `;
+                        historialCitas.appendChild(citaElement);
+                    });
+                } else {
+                    historialCitas.innerHTML = '<p>No hay citas registradas.</p>';
+                }
+            });
+        }
+
+        function cargarOpcionesMascotas(mascotas) {
+            const selectMascota = document.getElementById('mascota-cita');
+            selectMascota.innerHTML = '<option value="">Selecciona una mascota</option>';
+            Object.keys(mascotas).forEach(key => {
+                const mascota = mascotas[key];
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = mascota.nombre;
+                selectMascota.appendChild(option);
+            });
+        }
+
+        document.getElementById('form-agendar-cita').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const mascotaKey = document.getElementById('mascota-cita').value;
+            const fecha = document.getElementById('fecha-cita').value;
+            const hora = document.getElementById('hora-cita').value;
+            const motivo = document.getElementById('motivo-cita').value;
+
+            if (!mascotaKey) {
+                Swal.fire('Error', 'Por favor, selecciona una mascota', 'error');
+                return;
+            }
+
+            database.ref('usuarios/' + userId + '/mascotas/' + mascotaKey).once('value', (snapshot) => {
+                const mascota = snapshot.val();
+                const nuevaCita = {
+                    userId: userId,
+                    nombreMascota: mascota.nombre,
+                    fecha: fecha,
+                    hora: hora,
+                    motivo: motivo
+                };
+
+                database.ref('citas').push(nuevaCita).then(() => {
+                    Swal.fire('Éxito', 'Cita agendada correctamente', 'success');
+                    document.getElementById('form-agendar-cita').reset();
+                    cargarCitasProximas();
+                    cargarHistorialCitas();
+                }).catch((error) => {
+                    console.error("Error al agendar cita:", error);
+                    Swal.fire('Error', 'No se pudo agendar la cita', 'error');
+                });
+            });
+        });
+
+        function cerrarSesion() {
+            auth.signOut().then(() => {
+                window.location.href = 'iniciarS.html';
+            }).catch((error) => {
+                console.error("Error al cerrar sesión:", error);
             });
         }
 

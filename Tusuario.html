@@ -24,7 +24,7 @@
             <nav>
                 <ul class="flex space-x-6">
                     <li><a href="cuenta-usuario.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Inicio</a></li>
-                    <li><a href="tienda.html" class="text-gray-600 hover:text-gray-800 transition duration-300">Tienda</a></li>
+                    <li><a href="#" onclick="mostrarSeccion('tienda')" class="text-gray-600 hover:text-gray-800 transition duration-300">Tienda</a></li>
                     <li><a href="#" onclick="mostrarSeccion('perfil')" class="text-gray-600 hover:text-gray-800 transition duration-300">Mi Perfil</a></li>
                     <li><a href="#" onclick="cerrarSesion()" class="text-gray-600 hover:text-gray-800 transition duration-300">Cerrar Sesión</a></li>
                 </ul>
@@ -34,45 +34,89 @@
     </header>
 
     <main class="container mx-auto px-4 py-8 flex-grow">
-        <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Productos</h2>
-        <div id="productos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Los productos se cargarán dinámicamente aquí -->
-        </div>
+        <div id="seccion-tienda">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Productos</h2>
+            <div id="productos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Los productos se cargarán dinámicamente aquí -->
+            </div>
 
-        <div id="carrito" class="fixed top-24 right-4 bg-white p-4 rounded-lg shadow-lg hidden">
-            <h2 class="text-xl font-bold mb-4">Carrito de Compras</h2>
-            <div id="carrito-items" class="space-y-2"></div>
-            <div class="mt-4">
-                <h3 class="font-bold">Total: $<span id="total-carrito">0</span></h3>
-                <button class="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300" onclick="mostrarFormularioPagar()">Pagar</button>
+            <div id="carrito" class="fixed top-24 right-4 bg-white p-4 rounded-lg shadow-lg hidden">
+                <h2 class="text-xl font-bold mb-4">Carrito de Compras</h2>
+                <div id="carrito-items" class="space-y-2"></div>
+                <div class="mt-4">
+                    <h3 class="font-bold">Total: $<span id="total-carrito">0</span></h3>
+                    <button class="mt-2 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300" onclick="mostrarFormularioPagar()">Pagar</button>
+                </div>
+            </div>
+
+            <div id="form-pagar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+                <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
+                    <h2 class="text-2xl font-bold mb-4">Información de Pago</h2>
+                    <form id="payment-form" class="space-y-4">
+                        <div>
+                            <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre:</label>
+                            <input type="text" id="nombre" name="nombre" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
+                            <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </div>
+                        <div>
+                            <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección:</label>
+                            <input type="text" id="direccion" name="direccion" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </div>
+                        <div>
+                            <label for="tarjeta" class="block text-sm font-medium text-gray-700">Número de Tarjeta:</label>
+                            <input type="text" id="tarjeta" name="tarjeta" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition duration-300" onclick="cerrarFormularioPagar()">Cancelar</button>
+                            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Pagar</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
-        <div id="form-pagar" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
-            <div class="bg-white p-6 rounded-lg shadow-lg max-w-md w-full">
-                <h2 class="text-2xl font-bold mb-4">Información de Pago</h2>
-                <form id="payment-form" class="space-y-4">
-                    <div>
-                        <label for="nombre" class="block text-sm font-medium text-gray-700">Nombre:</label>
-                        <input type="text" id="nombre" name="nombre" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+        <div id="seccion-perfil" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Mi Perfil</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Información Personal</h3>
+                    <form id="form-perfil">
+                        <div class="mb-4 text-center">
+                            <img id="foto-perfil" src="img/placeholder-user.jpg" alt="Foto de perfil" class="w-32 h-32 rounded-full mx-auto mb-4 object-cover">
+                            <input type="file" id="foto-input" accept="image/*" class="hidden">
+                            <button type="button" onclick="document.getElementById('foto-input').click()" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Cambiar foto</button>
+                        </div>
+                        <div class="mb-4">
+                            <label for="nombre-perfil" class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+                            <input type="text" id="nombre-perfil" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="email-perfil" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                            <input type="email" id="email-perfil" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required readonly>
+                        </div>
+                        <div class="mb-4">
+                            <label for="telefono" class="block text-gray-700 text-sm font-bold mb-2">Teléfono</label>
+                            <input type="tel" id="telefono" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                        </div>
+                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300 w-full">Guardar Cambios</button>
+                    </form>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Mis Mascotas</h3>
+                    <div id="mascotas-container">
+                        <!-- Las mascotas se agregarán aquí dinámicamente -->
                     </div>
-                    <div>
-                        <label for="email" class="block text-sm font-medium text-gray-700">Email:</label>
-                        <input type="email" id="email" name="email" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    </div>
-                    <div>
-                        <label for="direccion" class="block text-sm font-medium text-gray-700">Dirección:</label>
-                        <input type="text" id="direccion" name="direccion" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    </div>
-                    <div>
-                        <label for="tarjeta" class="block text-sm font-medium text-gray-700">Número de Tarjeta:</label>
-                        <input type="text" id="tarjeta" name="tarjeta" required class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
-                    </div>
-                    <div class="flex justify-end space-x-2">
-                        <button type="button" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 transition duration-300" onclick="cerrarFormularioPagar()">Cancelar</button>
-                        <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Pagar</button>
-                    </div>
-                </form>
+                    <button type="button" onclick="agregarMascota()" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 w-full">Agregar Mascota</button>
+                </div>
+            </div>
+            <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-xl font-semibold mb-4">Historial de Compras</h3>
+                <div id="historial-compras" class="space-y-4">
+                    <!-- El historial de compras se cargará aquí dinámicamente -->
+                </div>
             </div>
         </div>
     </main>
@@ -126,6 +170,7 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
+        const storage = firebase.storage();
 
         let userId;
         let carrito = [];
@@ -137,304 +182,32 @@
                 userId = user.uid;
                 cargarDatosUsuario();
                 cargarProductos();
+                mostrarSeccion('tienda');
             } else {
                 window.location.href = 'iniciarS.html';
             }
         });
 
-         function cargarDatosUsuario() {
-            database.ref('usuarios/' + userId).once('value', (snapshot) => {
+        function cargarDatosUsuario() {
+            database.ref('usuarios/' + 
+
+ userId).once('value', (snapshot) => {
                 const usuario = snapshot.val();
-                document.getElementById('nombre-usuario').textContent = usuario.nombre || 'Usuario';
-                document.getElementById('nombre').value = usuario.nombre || '';
-                document.getElementById('email').value = usuario.email || '';
+                document.getElementById('usuario-info').textContent = `Bienvenido, ${usuario.nombre || 'Usuario'}`;
+                document.getElementById('nombre-perfil').value = usuario.nombre || '';
+                document.getElementById('email-perfil').value = usuario.email || '';
                 document.getElementById('telefono').value = usuario.telefono || '';
                 if (usuario.fotoPerfil) {
-                    
                     document.getElementById('foto-perfil').src = usuario.fotoPerfil;
                 }
                 cargarMascotas(usuario.mascotas || {});
-                cargarOpcionesMascotas(usuario.mascotas || {});
             });
-            cargarNovedades();
-            cargarCitasProximas();
-            cargarRecomendaciones();
             cargarHistorialCompras();
-            cargarHistorialCitas();
         }
 
         function mostrarSeccion(seccion) {
-            document.getElementById('seccion-inicio').classList.add('hidden');
-            document.getElementById('seccion-perfil').classList.add('hidden');
-            document.getElementById('seccion-agendar-cita').classList.add('hidden');
-            document.getElementById(`seccion-${seccion}`).classList.remove('hidden');
-        }
-
-        function cargarMascotas(mascotas) {
-            const container = document.getElementById('mascotas-container');
-            container.innerHTML = '';
-            Object.keys(mascotas).forEach((key, index) => {
-                const mascota = mascotas[key];
-                const mascotaElement = document.createElement('div');
-                mascotaElement.className = 'mb-4 p-4 border rounded';
-                mascotaElement.innerHTML = `
-                    <h4 class="font-bold">Mascota ${index + 1}</h4>
-                    <input type="text" value="${mascota.nombre}" placeholder="Nombre" class="mascota-nombre mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <input type="text" value="${mascota.especie}" placeholder="Especie" class="mascota-especie mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                    <input type="text" value="${mascota.raza}" placeholder="Raza" class="mascota-raza shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                `;
-                container.appendChild(mascotaElement);
-            });
-        }
-
-        function agregarMascota() {
-            const container = document.getElementById('mascotas-container');
-            const mascotaElement = document.createElement('div');
-            mascotaElement.className = 'mb-4 p-4 border rounded';
-            mascotaElement.innerHTML = `
-                <h4 class="font-bold">Nueva Mascota</h4>
-                <input type="text" placeholder="Nombre" class="mascota-nombre mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                <input type="text" placeholder="Especie" class="mascota-especie mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-                <input type="text" placeholder="Raza" class="mascota-raza shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
-            `;
-            container.appendChild(mascotaElement);
-        }
-
-        document.getElementById('form-perfil').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const nombre = document.getElementById('nombre').value;
-            const telefono = document.getElementById('telefono').value;
-            const mascotasElements = document.querySelectorAll('#mascotas-container > div');
-            const mascotas = {};
-
-            mascotasElements.forEach((element, index) => {
-                mascotas[`mascota${index + 1}`] = {
-                    nombre: element.querySelector('.mascota-nombre').value,
-                    especie: element.querySelector('.mascota-especie').value,
-                    raza: element.querySelector('.mascota-raza').value
-                };
-            });
-
-            database.ref('usuarios/' + userId).update({
-                nombre: nombre,
-                telefono: telefono,
-                mascotas: mascotas
-            }).then(() => {
-                Swal.fire('Éxito', 'Perfil actualizado correctamente', 'success');
-                document.getElementById('nombre-usuario').textContent = nombre;
-                cargarOpcionesMascotas(mascotas);
-                if (telefono) {
-                    enviarConfirmacion(telefono);
-                }
-            }).catch((error) => {
-                console.error("Error al actualizar perfil:", error);
-                Swal.fire('Error', 'No se pudo actualizar el perfil', 'error');
-            });
-        });
-
-        function enviarConfirmacion(telefono) {
-            // Simulación de envío de SMS
-            console.log(`Enviando SMS de confirmación al número: ${telefono}`);
-            // Aquí iría la lógica real para enviar un SMS usando un servicio de terceros
-            Swal.fire('Confirmación enviada', `Se ha enviado un SMS de confirmación al número ${telefono}`, 'info');
-        }
-
-        document.getElementById('foto-input').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                // Mostrar un indicador de carga
-                Swal.fire({
-                    title: 'Subiendo imagen...',
-                    text: 'Por favor espere',
-                    allowOutsideClick: false,
-                    showConfirmButton: false,
-                    willOpen: () => {
-                        Swal.showLoading();
-                    }
-                });
-        
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById('foto-perfil').src = e.target.result;
-                }
-                reader.readAsDataURL(file);
-        
-                const storageRef = storage.ref('fotos_perfil/' + userId + '/' + file.name);
-                const uploadTask = storageRef.put(file);
-        
-                uploadTask.on('state_changed', 
-                    (snapshot) => {
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log('Upload is ' + progress + '% done');
-                    }, 
-                    (error) => {
-                        console.error("Error al subir la imagen:", error);
-                        Swal.fire('Error', 'No se pudo subir la imagen: ' + error.message, 'error');
-                    }, 
-                    () => {
-                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-                            return database.ref('usuarios/' + userId).update({
-                                fotoPerfil: downloadURL
-                            });
-                        }).then(() => {
-                            Swal.fire('Éxito', 'Foto de perfil actualizada correctamente', 'success');
-                        }).catch((error) => {
-                            console.error("Error al actualizar la URL de la foto en la base de datos:", error);
-                            Swal.fire('Error', 'No se pudo actualizar la foto de perfil: ' + error.message, 'error');
-                        });
-                    }
-                );
-            }
-        });
-
-        function cargarNovedades() {
-            const listaNovedades = document.getElementById('lista-novedades');
-            listaNovedades.innerHTML = '';
-            // Aquí deberías cargar las novedades desde tu base de datos
-            const novedades = [
-                'Nueva línea de alimentos para mascotas disponible',
-                'Promoción de vacunación este mes',
-                'Nuevo servicio de peluquería canina'
-            ];
-            novedades.forEach(novedad => {
-                const li = document.createElement('li');
-                li.textContent = novedad;
-                listaNovedades.appendChild(li);
-            });
-        }
-
-        function cargarCitasProximas() {
-            const listaCitasProximas = document.getElementById('lista-citas-proximas');
-            listaCitasProximas.innerHTML = '';
-            database.ref('citas').orderByChild('userId').equalTo(userId).limitToLast(3).once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        const cita = childSnapshot.val();
-                        const li = document.createElement('li');
-                        li.textContent = `${cita.fecha} - ${cita.hora}: ${cita.nombreMascota}`;
-                        listaCitasProximas.appendChild(li);
-                    });
-                } else {
-                    listaCitasProximas.innerHTML = '<li>No tienes citas próximas</li>';
-                }
-            });
-        }
-
-        function cargarRecomendaciones() {
-            const listaRecomendaciones = document.getElementById('lista-recomendaciones');
-            listaRecomendaciones.innerHTML = '';
-            // Aquí deberías cargar las recomendaciones desde tu base de datos
-            const recomendaciones = [
-                'Recuerda desparasitar a tus mascotas cada 3 meses',
-                'Mantén al día las vacunas de tus mascotas',
-                'Una dieta balanceada es clave para la salud de tu mascota'
-            ];
-            recomendaciones.forEach(recomendacion => {
-                const li = document.createElement('li');
-                li.textContent = recomendacion;
-                listaRecomendaciones.appendChild(li);
-            });
-        }
-
-        function cargarHistorialCompras() {
-            const historialCompras = document.getElementById('historial-compras');
-            historialCompras.innerHTML = '';
-            database.ref('compras/' + userId).once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        const compra = childSnapshot.val();
-                        const compraElement = document.createElement('div');
-                        compraElement.className = 'bg-gray-100 p-4 rounded';
-                        compraElement.innerHTML = `
-                            <p class="font-bold">Fecha: ${new Date(compra.fecha).toLocaleDateString()}</p>
-                            <p>Total: $${compra.total.toFixed(2)}</p>
-                            <ul class="list-disc list-inside">
-                                ${compra.productos.map(producto => `<li>${producto.nombre} - $${producto.precio.toFixed(2)}</li>`).join('')}
-                            </ul>
-                        `;
-                        historialCompras.appendChild(compraElement);
-                    });
-                } else {
-                    historialCompras.innerHTML = '<p>No hay compras registradas.</p>';
-                }
-            });
-        }
-
-        function cargarHistorialCitas() {
-            const historialCitas = document.getElementById('historial-citas');
-            historialCitas.innerHTML = '';
-            database.ref('citas').orderByChild('userId').equalTo(userId).once('value', (snapshot) => {
-                if (snapshot.exists()) {
-                    snapshot.forEach((childSnapshot) => {
-                        const cita = childSnapshot.val();
-                        const citaElement = document.createElement('div');
-                        citaElement.className = 'bg-gray-100 p-4 rounded';
-                        citaElement.innerHTML = `
-                            <p class="font-bold">Fecha: ${cita.fecha}</p>
-                            <p>Hora: ${cita.hora}</p>
-                            <p>Mascota: ${cita.nombreMascota}</p>
-                            <p>Motivo: ${cita.motivo || 'No especificado'}</p>
-                        `;
-                        historialCitas.appendChild(citaElement);
-                    });
-                } else {
-                    historialCitas.innerHTML = '<p>No hay citas registradas.</p>';
-                }
-            });
-        }
-
-        function cargarOpcionesMascotas(mascotas) {
-            const selectMascota = document.getElementById('mascota-cita');
-            selectMascota.innerHTML = '<option value="">Selecciona una mascota</option>';
-            Object.keys(mascotas).forEach(key => {
-                const mascota = mascotas[key];
-                const option = document.createElement('option');
-                option.value = key;
-                option.textContent = mascota.nombre;
-                selectMascota.appendChild(option);
-            });
-        }
-
-        document.getElementById('form-agendar-cita').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const mascotaKey = document.getElementById('mascota-cita').value;
-            const fecha = document.getElementById('fecha-cita').value;
-            const hora = document.getElementById('hora-cita').value;
-            const motivo = document.getElementById('motivo-cita').value;
-
-            if (!mascotaKey) {
-                Swal.fire('Error', 'Por favor, selecciona una mascota', 'error');
-                return;
-            }
-
-            database.ref('usuarios/' + userId + '/mascotas/' + mascotaKey).once('value', (snapshot) => {
-                const mascota = snapshot.val();
-                const nuevaCita = {
-                    userId: userId,
-                    nombreMascota: mascota.nombre,
-                    fecha: fecha,
-                    hora: hora,
-                    motivo: motivo
-                };
-
-                database.ref('citas').push(nuevaCita).then(() => {
-                    Swal.fire('Éxito', 'Cita agendada correctamente', 'success');
-                    document.getElementById('form-agendar-cita').reset();
-                    cargarCitasProximas();
-                    cargarHistorialCitas();
-                }).catch((error) => {
-                    console.error("Error al agendar cita:", error);
-                    Swal.fire('Error', 'No se pudo agendar la cita', 'error');
-                });
-            });
-        });
-
-        function cerrarSesion() {
-            auth.signOut().then(() => {
-                window.location.href = 'iniciarS.html';
-            }).catch((error) => {
-                console.error("Error al cerrar sesión:", error);
-            });
+            document.getElementById('seccion-tienda').style.display = seccion === 'tienda' ? 'block' : 'none';
+            document.getElementById('seccion-perfil').style.display = seccion === 'perfil' ? 'block' : 'none';
         }
 
         function cargarProductos() {
@@ -448,6 +221,7 @@
             ];
 
             const productosContainer = document.getElementById('productos');
+            productosContainer.innerHTML = '';
             productos.forEach(producto => {
                 const productoElement = document.createElement('div');
                 productoElement.className = 'bg-white rounded-lg shadow-md p-4';
@@ -618,6 +392,122 @@
                 }
             );
         });
+
+        function cargarMascotas(mascotas) {
+            const container = document.getElementById('mascotas-container');
+            container.innerHTML = '';
+            Object.keys(mascotas).forEach((key, index) => {
+                const mascota = mascotas[key];
+                const mascotaElement = document.createElement('div');
+                mascotaElement.className = 'mb-4 p-4 border rounded';
+                mascotaElement.innerHTML = `
+                    <h4 class="font-bold">Mascota ${index + 1}</h4>
+                    <input type="text" value="${mascota.nombre}" placeholder="Nombre" class="mascota-nombre mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <input type="text" value="${mascota.especie}" placeholder="Especie" class="mascota-especie mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    <input type="text" value="${mascota.raza}" placeholder="Raza" class="mascota-raza shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                `;
+                container.appendChild(mascotaElement);
+            });
+        }
+
+        function agregarMascota() {
+            const container = document.getElementById('mascotas-container');
+            const mascotaElement = document.createElement('div');
+            mascotaElement.className = 'mb-4 p-4 border rounded';
+            mascotaElement.innerHTML = `
+                <h4 class="font-bold">Nueva Mascota</h4>
+                <input type="text" placeholder="Nombre" class="mascota-nombre mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input type="text" placeholder="Especie" class="mascota-especie mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                <input type="text" placeholder="Raza" class="mascota-raza shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+            `;
+            container.appendChild(mascotaElement);
+        }
+
+        document.getElementById('form-perfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre-perfil').value;
+            const telefono = document.getElementById('telefono').value;
+            const mascotasElements = document.querySelectorAll('#mascotas-container > div');
+            const mascotas = {};
+
+            mascotasElements.forEach((element, index) => {
+                mascotas[`mascota${index + 1}`] = {
+                    nombre: element.querySelector('.mascota-nombre').value,
+                    especie: element.querySelector('.mascota-especie').value,
+                    raza: element.querySelector('.mascota-raza').value
+                };
+            });
+
+            database.ref('usuarios/' + userId).update({
+                nombre: nombre,
+                telefono: telefono,
+                mascotas: mascotas
+            }).then(() => {
+                Swal.fire('Éxito', 'Perfil actualizado correctamente', 'success');
+                document.getElementById('usuario-info').textContent = `Bienvenido, ${nombre}`;
+            }).catch((error) => {
+                console.error("Error al actualizar perfil:", error);
+                Swal.fire('Error', 'No se pudo actualizar el perfil', 'error');
+            });
+        });
+
+        document.getElementById('foto-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('foto-perfil').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+
+                const storageRef = storage.ref('fotos_perfil/' + userId);
+                const uploadTask = storageRef.put(file);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        // Progreso de la carga
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        console.log('Upload is ' + progress + '% done');
+                    }, 
+                    (error) => {
+                        console.error("Error al subir la imagen:", error);
+                        Swal.fire('Error', 'No se pudo subir la imagen', 'error');
+                    }, 
+                    () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            database.ref('usuarios/' + userId).update({
+                                fotoPerfil: downloadURL
+                            });
+                            Swal.fire('Éxito', 'Foto de perfil actualizada correctamente', 'success');
+                        });
+                    }
+                );
+            }
+        });
+
+        function cargarHistorialCompras() {
+            const historialCompras = document.getElementById('historial-compras');
+            historialCompras.innerHTML = '';
+            database.ref('ordenes').orderByChild('userId').equalTo(userId).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const compra = childSnapshot.val();
+                        const compraElement = document.createElement('div');
+                        compraElement.className = 'bg-gray-100 p-4 rounded';
+                        compraElement.innerHTML = `
+                            <p class="font-bold">Fecha: ${new Date(compra.fecha).toLocaleDateString()}</p>
+                            <p>Total: $${compra.total.toFixed(2)}</p>
+                            <ul class="list-disc list-inside">
+                                ${compra.items.map(item => `<li>${item.nombre} - $${item.precio.toFixed(2)}</li>`).join('')}
+                            </ul>
+                        `;
+                        historialCompras.appendChild(compraElement);
+                    });
+                } else {
+                    historialCompras.innerHTML = '<p>No hay compras registradas.</p>';
+                }
+            });
+        }
 
         function cerrarSesion() {
             auth.signOut().then(() => {

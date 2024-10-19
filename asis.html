@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chimalhua-CAN - Panel del Asistente</title>
+    <title>Chimalhua-CAN - Cuenta de Asistente</title>
     <link rel="icon" href="img/logo.jpeg">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -11,18 +11,22 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
 </head>
 <body class="bg-gray-100 font-sans flex flex-col min-h-screen">
     <header class="bg-white shadow-md">
         <div class="container mx-auto px-4 py-6 flex flex-col md:flex-row items-center justify-between">
             <div class="flex items-center mb-4 md:mb-0">
                 <img src="img/logo.jpeg" alt="Chimalhua-CAN Logo" class="h-12 w-12 mr-4 rounded-full">
-                <h1 class="text-2xl font-bold text-gray-800">Panel del Asistente</h1>
+                <h1 class="text-2xl font-bold text-gray-800">Chimalhua-CAN</h1>
+                <span id="nombre-usuario" class="ml-4 text-lg font-semibold text-gray-600"></span>
             </div>
             <nav>
                 <ul class="flex space-x-6">
-                    <li><a href="#" onclick="mostrarCitas()" class="text-gray-600 hover:text-gray-800 transition duration-300">Citas</a></li>
-                    <li><a href="#" onclick="mostrarInventario()" class="text-gray-600 hover:text-gray-800 transition duration-300">Inventario</a></li>
+                    <li><a href="#" onclick="mostrarSeccion('inicio')" class="text-gray-600 hover:text-gray-800 transition duration-300">Inicio</a></li>
+                    <li><a href="#" onclick="mostrarSeccion('citas')" class="text-gray-600 hover:text-gray-800 transition duration-300">Citas</a></li>
+                    <li><a href="#" onclick="mostrarSeccion('inventario')" class="text-gray-600 hover:text-gray-800 transition duration-300">Inventario</a></li>
+                    <li><a href="#" onclick="mostrarSeccion('perfil')" class="text-gray-600 hover:text-gray-800 transition duration-300">Mi Perfil</a></li>
                     <li><a href="#" onclick="cerrarSesion()" class="text-gray-600 hover:text-gray-800 transition duration-300">Cerrar Sesión</a></li>
                 </ul>
             </nav>
@@ -30,34 +34,107 @@
     </header>
 
     <main class="container mx-auto px-4 py-12 flex-grow">
-        <div id="citas" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Gestión de Citas</h2>
-            <form id="form-cita" class="mb-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="nombreMascota" placeholder="Nombre de la mascota" class="border p-2 rounded" required>
-                    <input type="text" id="nombreDueno" placeholder="Nombre del dueño" class="border p-2 rounded" required>
-                    <input type="date" id="fecha" class="border p-2 rounded" required>
-                    <input type="time" id="hora" class="border p-2 rounded" required>
+        <div id="seccion-inicio" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Bienvenido, <span id="nombre-asistente"></span></h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Próximas Citas</h3>
+                    <div id="proximas-citas" class="space-y-4">
+                        <!-- Las próximas citas se cargarán aquí dinámicamente -->
+                    </div>
                 </div>
-                <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Agendar Cita</button>
-            </form>
-            <div id="lista-citas" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Las citas se cargarán aquí dinámicamente -->
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Resumen de Inventario</h3>
+                    <div id="resumen-inventario" class="space-y-4">
+                        <!-- El resumen de inventario se cargará aquí dinámicamente -->
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div id="inventario" class="hidden">
-            <h2 class="text-2xl font-bold mb-4">Gestión de Inventario</h2>
-            <form id="form-producto" class="mb-8">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input type="text" id="nombreProducto" placeholder="Nombre del producto" class="border p-2 rounded" required>
-                    <input type="number" id="cantidad" placeholder="Cantidad" class="border p-2 rounded" required>
-                    <input type="number" id="precio" placeholder="Precio" step="0.01" class="border p-2 rounded" required>
+        <div id="seccion-citas" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Gestión de Citas</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <form id="form-cita" class="mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="cita-fecha" class="block text-gray-700 text-sm font-bold mb-2">Fecha</label>
+                            <input type="date" id="cita-fecha" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                        <div>
+                            <label for="cita-hora" class="block text-gray-700 text-sm font-bold mb-2">Hora</label>
+                            <input type="time" id="cita-hora" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                        <div>
+                            <label for="cita-mascota" class="block text-gray-700 text-sm font-bold mb-2">Mascota</label>
+                            <input type="text" id="cita-mascota" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                        <div>
+                            <label for="cita-motivo" class="block text-gray-700 text-sm font-bold mb-2">Motivo</label>
+                            <input type="text" id="cita-motivo" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Agendar Cita</button>
+                </form>
+                <div id="lista-citas" class="space-y-4">
+                    <!-- Las citas se cargarán aquí dinámicamente -->
                 </div>
-                <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Agregar Producto</button>
-            </form>
-            <div id="lista-productos" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Los productos se cargarán aquí dinámicamente -->
+            </div>
+        </div>
+
+        <div id="seccion-inventario" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Gestión de Inventario</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <form id="form-producto" class="mb-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="producto-nombre" class="block text-gray-700 text-sm font-bold mb-2">Nombre del Producto</label>
+                            <input type="text" id="producto-nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                        <div>
+                            <label for="producto-cantidad" class="block text-gray-700 text-sm font-bold mb-2">Cantidad</label>
+                            <input type="number" id="producto-cantidad" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                        <div>
+                            <label for="producto-precio" class="block text-gray-700 text-sm font-bold mb-2">Precio</label>
+                            <input type="number" id="producto-precio" step="0.01" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Agregar Producto</button>
+                </form>
+                <div id="lista-productos" class="space-y-4">
+                    <!-- Los productos se cargarán aquí dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <div id="seccion-perfil" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Mi Perfil</h2>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <form id="form-perfil">
+                    <div class="mb-4 flex justify-center">
+                        <div class="relative">
+                            <img id="foto-perfil" src="img/default-profile.png" alt="Foto de perfil" class="w-32 h-32 rounded-full object-cover">
+                            <label for="input-foto-perfil" class="absolute bottom-0 right-0 bg-blue-500 text-white rounded-full p-2 cursor-pointer">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="input-foto-perfil" accept="image/*" class="hidden" onchange="subirFotoPerfil(event)">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label for="nombre" class="block text-gray-700 text-sm font-bold mb-2">Nombre</label>
+                        <input type="text" id="nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                    </div>
+                    <div class="mb-4">
+                        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
+                        <input type="email" id="email" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required readonly>
+                    </div>
+                    <div class="mb-4">
+                        <label for="telefono" class="block text-gray-700 text-sm font-bold mb-2">Teléfono</label>
+                        <input type="tel" id="telefono" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
+                    </div>
+                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Guardar Cambios</button>
+                </form>
             </div>
         </div>
     </main>
@@ -70,8 +147,8 @@
                     <p>Av. Saltillo s/n Esq. Calle Clavel Col. Jardines de San Agustín Chimalhuacán Edo. de Méx.</p>
                 </div>
                 <div>
-                    <h4 class="font-bold mb-2">Horario:</h4>
-                    <p>Lunes a Sábado: 10:00 a.m. - 7:00 p.m.</p>
+                    <h4  class="font-bold mb-2">Horario:</h4>
+                    <p>Lunes a Sábado: 10:00  a.m. - 7:00 p.m.</p>
                     <p>Domingos: 11:00 a.m. - 3:00 p.m.</p>
                 </div>
                 <div>
@@ -96,7 +173,7 @@
     </footer>
 
     <script>
-        // Configuración de Firebase (reemplaza con tus propias credenciales)
+        // Configuración de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyBhNGcipRymMP_1FFU2izi6Be2El2slG0E",
             authDomain: "chimalhua-can-dd624.firebaseapp.com",
@@ -111,68 +188,156 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const database = firebase.database();
+        const storage = firebase.storage();
 
-        function mostrarCitas() {
-            document.getElementById('citas').classList.remove('hidden');
-            document.getElementById('inventario').classList.add('hidden');
-            cargarCitas();
-        }
+        let userId;
 
-        function mostrarInventario() {
-            document.getElementById('inventario').classList.remove('hidden');
-            document.getElementById('citas').classList.add('hidden');
-            cargarProductos();
-        }
+        // Verificar si el usuario está autenticado
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                userId = user.uid;
+                cargarDatosUsuario();
+                mostrarSeccion('inicio');
+            } else {
+                window.location.href = 'iniciarS.html';
+            }
+        });
 
-        function cargarCitas() {
-            const listaCitas = document.getElementById('lista-citas');
-            listaCitas.innerHTML = '';
-            database.ref('citas').once('value', (snapshot) => {
-                snapshot.forEach((childSnapshot) => {
-                    const cita = childSnapshot.val();
-                    const citaElement = document.createElement('div');
-                    citaElement.className = 'bg-white p-4 rounded shadow';
-                    citaElement.innerHTML = `
-                        <h3 class="font-bold">${cita.nombreMascota}</h3>
-                        <p>Fecha: ${cita.fecha}</p>
-                        <p>Hora: ${cita.hora}</p>
-                        <p>Dueño: ${cita.nombreDueno}</p>
-                    `;
-                    listaCitas.appendChild(citaElement);
-                });
+        function cargarDatosUsuario() {
+            database.ref('usuarios/' + userId).once('value', (snapshot) => {
+                const usuario = snapshot.val();
+                document.getElementById('nombre-usuario').textContent = usuario.nombre || 'Asistente';
+                document.getElementById('nombre-asistente').textContent = usuario.nombre || '';
+                document.getElementById('nombre').value = usuario.nombre || '';
+                document.getElementById('email').value = usuario.email || '';
+                document.getElementById('telefono').value = usuario.telefono || '';
+                if (usuario.fotoPerfil) {
+                    document.getElementById('foto-perfil').src = usuario.fotoPerfil;
+                }
+                cargarProximasCitas();
+                cargarResumenInventario();
             });
         }
 
-        function cargarProductos() {
-            const listaProductos = document.getElementById('lista-productos');
-            listaProductos.innerHTML = '';
+        function mostrarSeccion(seccion) {
+            document.getElementById('seccion-inicio').classList.add('hidden');
+            document.getElementById('seccion-citas').classList.add('hidden');
+            document.getElementById('seccion-inventario').classList.add('hidden');
+            document.getElementById('seccion-perfil').classList.add('hidden');
+            document.getElementById(`seccion-${seccion}`).classList.remove('hidden');
+
+            if (seccion === 'citas') {
+                cargarCitas();
+            } else if (seccion === 'inventario') {
+                cargarInventario();
+            }
+        }
+
+        function cargarProximasCitas() {
+            const citasContainer = document.getElementById('proximas-citas');
+            citasContainer.innerHTML = '';
+            database.ref('citas').orderByChild('fecha').startAt(new Date().toISOString().split('T')[0]).limitToFirst(5).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const cita = childSnapshot.val();
+                        const citaElement = document.createElement('div');
+                        citaElement.className = 'bg-gray-100 p-4 rounded mb-2';
+                        citaElement.innerHTML = `
+                            <p><strong>Fecha:</strong> ${new Date(cita.fecha).toLocaleDateString()}</p>
+                            <p><strong>Hora:</strong> ${cita.hora}</p>
+                            <p><strong>Mascota:</strong> ${cita.nombreMascota || 'No especificado'}</p>
+                            <p><strong>Motivo:</strong> ${cita.motivo}</p>
+                        `;
+                        citasContainer.appendChild(citaElement);
+                    });
+                } else {
+                    citasContainer.innerHTML = '<p>No hay citas próximas.</p>';
+                }
+            });
+        }
+
+        function cargarResumenInventario() {
+            const resumenContainer = document.getElementById('resumen-inventario');
+            resumenContainer.innerHTML = '';
             database.ref('productos').once('value', (snapshot) => {
+                const totalProductos = snapshot.numChildren();
+                let productosEscasos = 0;
                 snapshot.forEach((childSnapshot) => {
                     const producto = childSnapshot.val();
-                    const productoElement = document.createElement('div');
-                    productoElement.className = 'bg-white p-4 rounded shadow';
-                    productoElement.innerHTML = `
-                        <h3 class="font-bold">${producto.nombre}</h3>
-                        <p>Cantidad: ${producto.cantidad}</p>
-                        <p>Precio: $${producto.precio.toFixed(2)}</p>
-                    `;
-                    listaProductos.appendChild(productoElement);
+                    if (producto.cantidad < 10) { // Consideramos escaso si hay menos de 10 unidades
+                        productosEscasos++;
+                    }
                 });
+                resumenContainer.innerHTML = `
+                    <p><strong>Total de productos:</strong> ${totalProductos}</p>
+                    <p><strong>Productos escasos:</strong> ${productosEscasos}</p>
+                `;
+            });
+        }
+
+        function cargarCitas() {
+            const citasContainer = document.getElementById('lista-citas');
+            citasContainer.innerHTML = '';
+            database.ref('citas').orderByChild('fecha').startAt(new Date().toISOString().split('T')[0]).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const cita = childSnapshot.val();
+                        const citaElement = document.createElement('div');
+                        citaElement.className = 'bg-gray-100 p-4 rounded mb-2';
+                        citaElement.innerHTML = `
+                            <p><strong>Fecha:</strong> ${new Date(cita.fecha).toLocaleDateString()}</p>
+                            <p><strong>Hora:</strong> ${cita.hora}</p>
+                            <p><strong>Mascota:</strong> ${cita.nombreMascota || 'No especificado'}</p>
+                            <p><strong>Motivo:</strong> ${cita.motivo}</p>
+                            <button onclick="editarCita('${childSnapshot.key}')" class="mt-2 bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 transition duration-300">Editar</button>
+                            <button onclick="cancelarCita('${childSnapshot.key}')" class="mt-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-300">Cancelar</button>
+                        `;
+                        citasContainer.appendChild(citaElement);
+                    });
+                } else {
+                    citasContainer.innerHTML = '<p>No hay citas programadas.</p>';
+                }
+            });
+        }
+
+        function cargarInventario() {
+            const productosContainer = document.getElementById('lista-productos');
+            productosContainer.innerHTML = '';
+            database.ref('productos').once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const producto = childSnapshot.val();
+                        const productoElement = document.createElement('div');
+                        productoElement.className = 'bg-gray-100 p-4 rounded mb-2';
+                        productoElement.innerHTML = `
+                            <p><strong>Nombre:</strong> ${producto.nombre}</p>
+                            <p><strong>Cantidad:</strong> ${producto.cantidad}</p>
+                            <p><strong>Precio:</strong> $${producto.precio.toFixed(2)}</p>
+                            <button onclick="editarProducto('${childSnapshot.key}')" class="mt-2 bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 transition duration-300">Editar</button>
+                            <button onclick="eliminarProducto('${childSnapshot.key}')" class="mt-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-300">Eliminar</button>
+                        `;
+                        productosContainer.appendChild(productoElement);
+                    });
+                } else {
+                    productosContainer.innerHTML = '<p>No hay productos en el inventario.</p>';
+                }
             });
         }
 
         document.getElementById('form-cita').addEventListener('submit', function(e) {
             e.preventDefault();
             const cita = {
-                nombreMascota: document.getElementById('nombreMascota').value,
-                nombreDueno: document.getElementById('nombreDueno').value,
-                fecha: document.getElementById('fecha').value,
-                hora: document.getElementById('hora').value
+                fecha: document.getElementById('cita-fecha').value,
+                hora: document.getElementById('cita-hora').value,
+                nombreMascota: document.getElementById('cita-mascota').value,
+                motivo: document.getElementById('cita-motivo').value
             };
+
             database.ref('citas').push(cita).then(() => {
                 Swal.fire('Éxito', 'Cita agendada correctamente', 'success');
-                this.reset();
+                document.getElementById('form-cita').reset();
                 cargarCitas();
+                cargarProximasCitas();
             }).catch((error) => {
                 console.error("Error al agendar cita:", error);
                 Swal.fire('Error', 'No se pudo agendar la cita', 'error');
@@ -182,19 +347,125 @@
         document.getElementById('form-producto').addEventListener('submit', function(e) {
             e.preventDefault();
             const producto = {
-                nombre: document.getElementById('nombreProducto').value,
-                cantidad: parseInt(document.getElementById('cantidad').value),
-                precio: parseFloat(document.getElementById('precio').value)
+                nombre: document.getElementById('producto-nombre').value,
+                cantidad: parseInt(document.getElementById('producto-cantidad').value),
+                precio: parseFloat(document.getElementById('producto-precio').value)
             };
+
             database.ref('productos').push(producto).then(() => {
                 Swal.fire('Éxito', 'Producto agregado correctamente', 'success');
-                this.reset();
-                cargarProductos();
+                document.getElementById('form-producto').reset();
+                cargarInventario();
+                cargarResumenInventario();
             }).catch((error) => {
                 console.error("Error al agregar producto:", error);
                 Swal.fire('Error', 'No se pudo agregar el producto', 'error');
             });
         });
+
+        function editarCita(citaId) {
+            // Implementar lógica para editar cita
+            Swal.fire('Editar Cita', 'Función no implementada', 'info');
+        }
+
+        function cancelarCita(citaId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres cancelar esta cita?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, cancelar',
+                cancelButtonText: 'No, mantener'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    database.ref('citas/' + citaId).remove().then(() => {
+                        Swal.fire('Cancelada', 'La cita ha sido cancelada', 'success');
+                        cargarCitas();
+                        cargarProximasCitas();
+                    }).catch((error) => {
+                        console.error("Error al cancelar cita:", error);
+                        Swal.fire('Error', 'No se pudo cancelar la cita', 'error');
+                    });
+                }
+            });
+        }
+
+        function editarProducto(productoId) {
+            // Implementar lógica para editar producto
+            Swal.fire('Editar Producto', 'Función no implementada', 'info');
+        }
+
+        function eliminarProducto(productoId) {
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres eliminar este producto?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, eliminar',
+                cancelButtonText: 'No, mantener'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    database.ref('productos/' + productoId).remove().then(() => {
+                        Swal.fire('Eliminado', 'El producto ha sido eliminado', 'success');
+                        cargarInventario();
+                        cargarResumenInventario();
+                    }).catch((error) => {
+                        console.error("Error al eliminar producto:", error);
+                        Swal.fire('Error', 'No se pudo eliminar el producto', 'error');
+                    });
+                }
+            });
+        }
+
+        document.getElementById('form-perfil').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const nombre = document.getElementById('nombre').value;
+            const telefono = document.getElementById('telefono').value;
+
+            database.ref('usuarios/' + userId).update({
+                nombre: nombre,
+                telefono: telefono
+            }).then(() => {
+                Swal.fire('Éxito', 'Perfil actualizado correctamente', 'success');
+                document.getElementById('nombre-usuario').textContent = nombre;
+                document.getElementById('nombre-asistente').textContent = nombre;
+            }).catch((error) => {
+                console.error("Error al actualizar perfil:", error);
+                Swal.fire('Error', 'No se pudo actualizar el perfil', 'error');
+            });
+        });
+
+        function subirFotoPerfil(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const storageRef = storage.ref('fotos_perfil/' + userId);
+                const uploadTask = storageRef.put(file);
+
+                uploadTask.on('state_changed', 
+                    (snapshot) => {
+                        // Progreso de la subida
+                    }, 
+                    (error) => {
+                        console.error("Error al subir la imagen:", error);
+                        Swal.fire('Error', 'No se pudo subir la imagen', 'error');
+                    }, 
+                    () => {
+                        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            database.ref('usuarios/' + userId).update({
+                                fotoPerfil: downloadURL
+                            }).then(() => {
+                                document.getElementById('foto-perfil').src = downloadURL;
+                                Swal.fire('Éxito', 'Foto de perfil actualizada', 'success');
+                            });
+                        });
+                    }
+                );
+            }
+        }
 
         function cerrarSesion() {
             auth.signOut().then(() => {
@@ -204,24 +475,8 @@
             });
         }
 
-        // Verificar si el usuario está autenticado
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                // Verificar si el usuario es un asistente
-                database.ref('usuarios/' + user.uid).once('value').then((snapshot) => {
-                    const userData = snapshot.val();
-                    if (userData && userData.tipo === 'asistente') {
-                        mostrarCitas(); // Mostrar citas por defecto
-                    } else {
-                        // Si no es asistente, redirigir a la página de inicio de sesión
-                        window.location.href = 'iniciarS.html';
-                    }
-                });
-            } else {
-                // Si no hay usuario autenticado, redirigir a la página de inicio de sesión
-                window.location.href = 'iniciarS.html';
-            }
-        });
+        // Inicialización
+        mostrarSeccion('inicio');
     </script>
 </body>
 </html>

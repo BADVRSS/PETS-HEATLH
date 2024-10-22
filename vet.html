@@ -29,6 +29,7 @@
                     <li><a href="#" onclick="mostrarSeccion('tienda')" class="text-gray-600 hover:text-gray-800 transition duration-300">Tienda</a></li>
                     <li><a href="#" onclick="mostrarSeccion('inventario')" class="text-gray-600 hover:text-gray-800 transition duration-300">Inventario</a></li>
                     <li><a href="#" onclick="mostrarSeccion('servicios')" class="text-gray-600 hover:text-gray-800 transition duration-300">Servicios</a></li>
+                    <li><a href="#" onclick="mostrarSeccion('expedientes')" class="text-gray-600 hover:text-gray-800 transition duration-300">Expedientes</a></li>
                     <li><a href="#" onclick="mostrarSeccion('perfil')" class="text-gray-600 hover:text-gray-800 transition duration-300">Mi Perfil</a></li>
                     <li><a href="#" onclick="cerrarSesion()" class="text-gray-600 hover:text-gray-800 transition duration-300">Cerrar Sesión</a></li>
                 </ul>
@@ -44,6 +45,12 @@
                     <h3 class="text-xl font-semibold mb-4">Próximas Citas</h3>
                     <div id="proximas-citas" class="space-y-4">
                         <!-- Las próximas citas se cargarán aquí dinámicamente -->
+                    </div>
+                </div>
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <h3 class="text-xl font-semibold mb-4">Solicitudes de Servicios</h3>
+                    <div id="solicitudes-servicios" class="space-y-4">
+                        <!-- Las solicitudes de servicios se cargarán aquí dinámicamente -->
                     </div>
                 </div>
                 <div class="bg-white rounded-lg shadow-md p-6">
@@ -109,7 +116,7 @@
                         </div>
                         <div>
                             <label for="producto-precio" class="block text-gray-700 text-sm font-bold mb-2">Precio</label>
-                            <input type="number" id="producto-precio" step="0.01" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <input type="number" id="producto-precio" step="0.01" min="0.01" max="1500" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
                         <div>
                             <label for="producto-descripcion" class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
@@ -143,7 +150,7 @@
                         </div>
                         <div>
                             <label for="inventario-precio" class="block text-gray-700 text-sm font-bold mb-2">Precio de Compra</label>
-                            <input type="number" id="inventario-precio" step="0.01" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <input type="number" id="inventario-precio" step="0.01" min="0.01" max="1500" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
                     </div>
                     <button type="submit" class="mt-4 bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300">Agregar al Inventario</button>
@@ -160,16 +167,16 @@
                 <form id="form-servicio" class="mb-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label for="servicio-nombre" class="block text-gray-700 text-sm font-bold mb-2">Nombre del Servicio</label>
+                            <label for="servicio-nombre" class="block text-gray-700  text-sm font-bold mb-2">Nombre del Servicio</label>
                             <input type="text" id="servicio-nombre" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
                         <div>
                             <label for="servicio-precio" class="block text-gray-700 text-sm font-bold mb-2">Precio</label>
-                            <input type="number" id="servicio-precio" step="0.01" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
+                            <input type="number" id="servicio-precio" step="0.01" min="0.01" max="1500" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required>
                         </div>
                         <div>
                             <label for="servicio-descripcion" class="block text-gray-700 text-sm font-bold mb-2">Descripción</label>
-                            <textarea id="servicio-descripcion" class="shadow appearance-none border rounded w-full  py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
+                            <textarea id="servicio-descripcion" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" required></textarea>
                         </div>
                     </div>
                     <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Agregar Servicio</button>
@@ -177,6 +184,13 @@
                 <div id="lista-servicios" class="space-y-4">
                     <!-- Los servicios se cargarán aquí dinámicamente -->
                 </div>
+            </div>
+        </div>
+
+        <div id="seccion-expedientes" class="hidden">
+            <h2 class="text-3xl font-bold text-center mb-8 text-gray-800">Expedientes de Pacientes</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="lista-expedientes">
+                <!-- Expedientes will be loaded here dynamically -->
             </div>
         </div>
 
@@ -287,6 +301,7 @@
                     document.getElementById('foto-perfil').src = usuario.fotoPerfil;
                 }
                 cargarProximasCitas();
+                cargarSolicitudesServicios();
                 cargarResumenPacientes();
             });
         }
@@ -305,6 +320,8 @@
                 cargarInventario();
             } else if (seccion === 'servicios') {
                 cargarServicios();
+            } else if (seccion === 'expedientes') {
+                cargarExpedientes();
             }
         }
 
@@ -327,6 +344,29 @@
                     });
                 } else {
                     citasContainer.innerHTML = '<p>No hay citas próximas.</p>';
+                }
+            });
+        }
+
+        function cargarSolicitudesServicios() {
+            const solicitudesContainer = document.getElementById('solicitudes-servicios');
+            solicitudesContainer.innerHTML = '';
+            database.ref('solicitudes_servicios').orderByChild('fecha').startAt(new Date().toISOString().split('T')[0]).limitToFirst(5).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const solicitud = childSnapshot.val();
+                        const solicitudElement = document.createElement('div');
+                        solicitudElement.className = 'bg-gray-100 p-4 rounded mb-2';
+                        solicitudElement.innerHTML = `
+                            <p><strong>Fecha:</strong> ${new Date(solicitud.fecha).toLocaleDateString()}</p>
+                            <p><strong>Servicio:</strong> ${solicitud.nombreServicio}</p>
+                            <p><strong>Cliente:</strong> ${solicitud.nombreCliente}</p>
+                            <p><strong>Estado:</strong> ${solicitud.estado}</p>
+                        `;
+                        solicitudesContainer.appendChild(solicitudElement);
+                    });
+                } else {
+                    solicitudesContainer.innerHTML = '<p>No hay solicitudes de servicios pendientes.</p>';
                 }
             });
         }
@@ -387,7 +427,7 @@
                             <p><strong>Nombre:</strong> ${cliente.nombre}</p>
                             <p><strong>Email:</strong> ${cliente.email}</p>
                             <p><strong>Teléfono:</strong> ${cliente.telefono}</p>
-                            <p><strong>Fijo:</strong> ${cliente.fijo || 'No especificado'}</p>
+                            <p><strong>Fijo:</strong>  ${cliente.fijo || 'No especificado'}</p>
                             <p><strong>Dirección:</strong> ${cliente.direccion}</p>
                             <button onclick="editarCliente('${childSnapshot.key}')" class="mt-2 bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 transition duration-300">Editar</button>
                             <button onclick="eliminarCliente('${childSnapshot.key}')" class="mt-2 bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600 transition duration-300">Eliminar</button>
@@ -473,6 +513,53 @@
             });
         }
 
+        function cargarExpedientes() {
+            const expedientesContainer = document.getElementById('lista-expedientes');
+            expedientesContainer.innerHTML = '';
+            database.ref('clientes').once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const cliente = childSnapshot.val();
+                        const expedienteElement = document.createElement('div');
+                        expedienteElement.className = 'bg-white rounded-lg shadow-md p-6';
+                        expedienteElement.innerHTML = `
+                            <div class="flex items-center mb-4">
+                                <img src="${cliente.fotoPerfil || 'img/default-profile.png'}" alt="${cliente.nombre}" class="w-16 h-16 rounded-full mr-4">
+                                <div>
+                                    <h3 class="text-xl font-semibold">${cliente.nombre}</h3>
+                                    <p class="text-gray-600">${cliente.email}</p>
+                                </div>
+                            </div>
+                            <h4 class="font-semibold mb-2">Mascotas:</h4>
+                            <ul class="list-disc list-inside mb-4" id="mascotas-${childSnapshot.key}"></ul>
+                            <button onclick="agregarNota('${childSnapshot.key}')" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition duration-300">Agregar Nota</button>
+                            <button onclick="agregarFoto('${childSnapshot.key}')" class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition duration-300 ml-2">Agregar Foto</button>
+                        `;
+                        expedientesContainer.appendChild(expedienteElement);
+                        cargarMascotas(childSnapshot.key);
+                    });
+                } else {
+                    expedientesContainer.innerHTML = '<p>No hay expedientes registrados.</p>';
+                }
+            });
+        }
+
+        function cargarMascotas(clienteId) {
+            const mascotasContainer = document.getElementById(`mascotas-${clienteId}`);
+            database.ref('mascotas').orderByChild('clienteId').equalTo(clienteId).once('value', (snapshot) => {
+                if (snapshot.exists()) {
+                    snapshot.forEach((childSnapshot) => {
+                        const mascota = childSnapshot.val();
+                        const mascotaElement = document.createElement('li');
+                        mascotaElement.textContent = mascota.nombre;
+                        mascotasContainer.appendChild(mascotaElement);
+                    });
+                } else {
+                    mascotasContainer.innerHTML = '<li>No hay mascotas registradas</li>';
+                }
+            });
+        }
+
         document.getElementById('form-cliente').addEventListener('submit', function(e) {
             e.preventDefault();
             const nombre = document.getElementById('cliente-nombre').value;
@@ -480,6 +567,31 @@
             const telefono = document.getElementById('cliente-telefono').value;
             const fijo = document.getElementById('cliente-fijo').value;
             const direccion = document.getElementById('cliente-direccion').value;
+
+            if (!nombre || !email || !telefono || !direccion) {
+                Swal.fire('Error', 'Por favor, complete todos los campos obligatorios', 'error');
+                return;
+            }
+
+            if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(nombre)) {
+                Swal.fire('Error', 'El nombre solo debe contener letras y espacios', 'error');
+                return;
+            }
+
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                Swal.fire('Error', 'Por favor, ingrese un email válido', 'error');
+                return;
+            }
+
+            if (!/^[0-9]{10}$/.test(telefono)) {
+                Swal.fire('Error', 'El número de teléfono debe tener 10 dígitos', 'error');
+                return;
+            }
+
+            if (fijo && !/^[0-9]{10}$/.test(fijo)) {
+                Swal.fire('Error', 'El número fijo debe tener 10 dígitos', 'error');
+                return;
+            }
 
             database.ref('clientes').push({
                 nombre: nombre,
@@ -502,6 +614,16 @@
             const precio = parseFloat(document.getElementById('producto-precio').value);
             const descripcion = document.getElementById('producto-descripcion').value;
             const imagen = document.getElementById('producto-imagen').files[0];
+
+            if (!nombre || !precio || !descripcion || !imagen) {
+                Swal.fire('Error', 'Por favor, complete todos los campos', 'error');
+                return;
+            }
+
+            if (precio < 0.01 || precio > 1500) {
+                Swal.fire('Error', 'El precio debe estar entre $0.01 y $1500', 'error');
+                return;
+            }
 
             if (imagen) {
                 const storageRef = storage.ref('productos/' + imagen.name);
@@ -532,6 +654,21 @@
             const cantidad = parseInt(document.getElementById('inventario-cantidad').value);
             const precio = parseFloat(document.getElementById('inventario-precio').value);
 
+            if (!nombre || !cantidad || !precio) {
+                Swal.fire('Error', 'Por favor, complete todos los campos', 'error');
+                return;
+            }
+
+            if (cantidad < 1) {
+                Swal.fire('Error', 'La cantidad debe ser al menos 1', 'error');
+                return;
+            }
+
+            if (precio < 0.01 || precio > 1500) {
+                Swal.fire('Error', 'El precio debe estar entre $0.01 y $1500', 'error');
+                return;
+            }
+
             database.ref('inventario').push({
                 nombre: nombre,
                 cantidad: cantidad,
@@ -550,6 +687,16 @@
             const nombre = document.getElementById('servicio-nombre').value;
             const precio = parseFloat(document.getElementById('servicio-precio').value);
             const descripcion = document.getElementById('servicio-descripcion').value;
+
+            if (!nombre || !precio || !descripcion) {
+                Swal.fire('Error', 'Por favor, complete todos los campos', 'error');
+                return;
+            }
+
+            if (precio < 0.01 || precio > 1500) {
+                Swal.fire('Error', 'El precio debe estar entre $0.01 y $1500', 'error');
+                return;
+            }
 
             database.ref('servicios').push({
                 nombre: nombre,
@@ -605,8 +752,32 @@
         }
 
         function reagendarCita(citaId) {
-            // Implementar lógica para reagendar la cita
-            Swal.fire('Reagendar Cita', 'Funcionalidad en desarrollo', 'info');
+            database.ref('citas/' + citaId).once('value', (snapshot) => {
+                const cita = snapshot.val();
+                Swal.fire({
+                    title: 'Reagendar Cita',
+                    html:
+                        `<input id="swal-input1" class="swal2-input" type="date" value="${cita.fecha}">` +
+                        `<input id="swal-input2" class="swal2-input" type="time" value="${cita.hora}">`,
+                    focusConfirm: false,
+                    preConfirm: () => {
+                        return {
+                            fecha: document.getElementById('swal-input1').value,
+                            hora: document.getElementById('swal-input2').value
+                        }
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        database.ref('citas/' + citaId).update(result.value).then(() => {
+                            Swal.fire('Éxito', 'Cita reagendada correctamente', 'success');
+                            cargarCitas();
+                            enviarMensaje(cita.usuarioId, 'Su cita ha sido reagendada para ' + result.value.fecha + ' a las ' + result.value.hora);
+                        }).catch((error) => {
+                            Swal.fire('Error', 'No se pudo reagendar la cita: ' + error.message, 'error');
+                        });
+                    }
+                });
+            });
         }
 
         function cancelarCita(citaId) {
@@ -621,13 +792,29 @@
                 cancelButtonText: 'No, mantener'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    database.ref('citas/' + citaId).remove().then(() => {
-                        Swal.fire('Cancelada', 'La cita ha sido cancelada.', 'success');
-                        cargarCitas();
-                    }).catch((error) => {
-                        Swal.fire('Error', 'No se pudo cancelar la cita: ' + error.message, 'error');
+                    database.ref('citas/' + citaId).once('value', (snapshot) => {
+                        const cita = snapshot.val();
+                        database.ref('citas/' + citaId).remove().then(() => {
+                            Swal.fire('Cancelada', 'La cita ha sido cancelada.', 'success');
+                            cargarCitas();
+                            enviarMensaje(cita.usuarioId, 'Su cita para el ' + cita.fecha + ' a las ' + cita.hora + ' ha sido cancelada.');
+                        }).catch((error) => {
+                            Swal.fire('Error', 'No se pudo cancelar la cita: ' + error.message, 'error');
+                        });
                     });
                 }
+            });
+        }
+
+        function enviarMensaje(usuarioId, mensaje) {
+            database.ref('mensajes/' + usuarioId).push({
+                contenido: mensaje,
+                fecha: new Date().toISOString(),
+                leido: false
+            }).then(() => {
+                console.log('Mensaje enviado correctamente');
+            }).catch((error) => {
+                console.error('Error al enviar mensaje:', error);
             });
         }
 
@@ -763,6 +950,57 @@
                         cargarServicios();
                     }).catch((error) => {
                         Swal.fire('Error', 'No se pudo eliminar el servicio: ' + error.message, 'error');
+                    });
+                }
+            });
+        }
+
+        function agregarNota(clienteId) {
+            Swal.fire({
+                title: 'Agregar Nota',
+                input: 'textarea',
+                inputPlaceholder: 'Escribe tu nota aquí...',
+                showCancelButton: true,
+                confirmButtonText: 'Guardar',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    database.ref('notas/' + clienteId).push({
+                        contenido: result.value,
+                        fecha: new Date().toISOString()
+                    }).then(() => {
+                        Swal.fire('Éxito', 'Nota agregada correctamente', 'success');
+                    }).catch((error) => {
+                        Swal.fire('Error', 'No se pudo agregar la nota: ' + error.message, 'error');
+                    });
+                }
+            });
+        }
+
+        function agregarFoto(clienteId) {
+            Swal.fire({
+                title: 'Agregar Foto',
+                input: 'file',
+                inputAttributes: {
+                    'accept': 'image/*',
+                    'aria-label': 'Sube una foto'
+                }
+            }).then((result) => {
+                if (result.value) {
+                    const file = result.value;
+                    const storageRef = storage.ref('fotos_expediente/' + clienteId + '/' + file.name);
+                    
+                    storageRef.put(file).then((snapshot) => {
+                        snapshot.ref.getDownloadURL().then((downloadURL) => {
+                            database.ref('fotos/' + clienteId).push({
+                                url: downloadURL,
+                                fecha: new Date().toISOString()
+                            }).then(() => {
+                                Swal.fire('Éxito', 'Foto agregada correctamente', 'success');
+                            });
+                        });
+                    }).catch((error) => {
+                        Swal.fire('Error', 'No se pudo subir la foto: ' + error.message, 'error');
                     });
                 }
             });
